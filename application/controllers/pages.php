@@ -32,9 +32,9 @@ class Pages extends CI_Controller {
 
 	}
 	
-	public function locations_check($locations)
+	public function locations_check($location)
 	{
-		if ($locations == '0') {
+		if ($location == '0') {
 			$this->form_validation->set_message('locations_check', 'The %s field is required');
 			return FALSE;
 		} else {
