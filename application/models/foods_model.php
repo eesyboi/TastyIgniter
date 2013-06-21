@@ -5,22 +5,25 @@ class Foods_model extends CI_Model {
 		$this->load->database();
 	}
 
-	public function getFoods($category = FALSE) {
-		if ($category === FALSE) {
-			$query = $this->db->get('foods');
+	public function getFoods($food_category = FALSE) {
+		if ($food_category === FALSE) {
+			$this->db->select('*');
+			$this->db->from('foods');
+			$this->db->join('categories', 'categories.category_id = foods.food_category', 'left');
+			$query = $this->db->get();
 			return $query->result_array();
 		}
 
 		$this->db->select('*');
 		$this->db->from('foods');
-		$this->db->join('categories', 'categories.id = foods.category', 'left');
+		$this->db->join('categories', 'categories.category_id = foods.food_category', 'left');
 
-		$query = $this->db->get_where('', array('category' => $category));
+		$query = $this->db->get_where('', array('food_category' => $food_category));
 		return $query->result_array();
 	}
 
-	public function getCategories($name = FALSE) {
-		if ($name === FALSE) {
+	public function getCategories($category_name = FALSE) {
+		if ($category_name === FALSE) {
 			$query = $this->db->get('categories');
 			return $query->result_array();
 		}

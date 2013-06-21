@@ -6,11 +6,11 @@
 
 	<?php echo validation_errors(); ?>
 	<?php echo form_open('foods') ?>
-	<label for="category">Select Category</label> 
-	<select name="category" id="category">
-        <option value="">- select category - </option>
+	<label for="food_category">Select Category</label> 
+	<select name="food_category" id="food_category">
+        <option value="0">- select category - </option>
 		<?php foreach ($categories as $category) { ?>
-        <option value="<?php echo $category['id']; ?>">- <?php echo $category['name']; ?> - </option>
+        <option value="<?php echo $category['category_id']; ?>">- <?php echo $category['category_name']; ?> - </option>
 		<?php } ?>
 	</select>
 	<input type="submit" name="submit" value="Show foods" /> 
@@ -29,15 +29,16 @@
 		<tbody>
 			<?php foreach ($foods as $food) { ?>
 			<tr>
-				<td><a href="" alt="click to view full image" target="_blank"><img src="<?php echo $food['photo']; ?>" width="80" height="70"></a></td>
-				<td><?php echo $food['name']; ?></td>
-				<td><?php echo $food['description']; ?></td>
-				<td>Category Name</td>
-				<td><?php echo $food['price']; ?></td>
-				<td><a href="<?php echo $food['id']; ?>">Add To Cart</a></td>
+				<td><a href="" alt="click to view full image" target="_blank"><img src="<?php echo $food['food_photo']; ?>" width="80" height="70"></a></td>
+				<td><?php echo $food['food_name']; ?></td>
+				<td><?php echo $food['food_description']; ?></td>
+				<td><?php echo $food['category_name']; ?></td>
+				<td><?php echo $food['food_price']; ?></td>
+				<td><a href="<?php echo $food['food_id']; ?>">Add To Cart</a></td>
 			</tr>
 			<?php } ?>
 		</tbody>
     </table>
     </div>
 </div>
+  <?php echo print_r($foods) ?>
