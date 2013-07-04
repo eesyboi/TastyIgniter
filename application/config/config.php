@@ -245,14 +245,14 @@ $config['encryption_key'] = 'muh6T37619LO09uJpk1679pCI06LHps4';
 |
 */
 $config['sess_cookie_name']		= 'ci_session';
-$config['sess_expiration']		= 7200;
+$config['sess_expiration']		= 0;
 $config['sess_expire_on_close']	= FALSE;
 $config['sess_encrypt_cookie']	= FALSE;
-$config['sess_use_database']	= FALSE;
+$config['sess_use_database']	= TRUE;
 $config['sess_table_name']		= 'ci_sessions';
 $config['sess_match_ip']		= FALSE;
 $config['sess_match_useragent']	= TRUE;
-$config['sess_time_to_update']	= 300;
+$config['sess_time_to_update']	= 0;
 
 /*
 |--------------------------------------------------------------------------
@@ -356,6 +356,19 @@ $config['rewrite_short_tags'] = FALSE;
 |
 */
 $config['proxy_ips'] = '';
+
+/*
+|--------------------------------------------------------------------------
+| Setting Upload Preferences
+|--------------------------------------------------------------------------
+|
+|
+*/
+//$config['upload_path'] = 'http://localhost/TastyIgniter/assets/img/';
+//$config['allowed_types'] = 'gif|jpg|png';
+//$config['max_size'] = '300';
+//$config['max_width'] = '2024';
+//$config['max_height'] = '1468';
 
 
 /* End of file config.php */

@@ -7,44 +7,62 @@ class Pages extends CI_Controller {
 		$this->output->enable_profiler(TRUE); // for debugging profiler... remove later
 	}
 
-	public function view($page = 'home') {
-		$this->load->helper('form');
-		$this->load->library('form_validation');
+	public function home() {
 			
-		if ( !file_exists('application/views/pages/'.$page.'.php')) {
+		//check if file exists in views
+		if ( !file_exists('application/views/main/home.php')) {
 			// Whoops, we don't have a page for that!
 			show_404();
 		}
-	
-		$data['title'] = ucfirst($page); // Capitalize the first letter
-		$data['locations'] = $this->Locations_model->getLocations();
+			
+		$data['heading'] = 'Welcome To FoodIgniter!';
+		
+		$data['locations'] = array();
+		$results = $this->Locations_model->getLocations();
+		foreach ($results as $result) {					
+			$data['locations'][] = array(
+				'location_id'	=>	$result['location_id'],
+				'location_name'	=>	$result['location_name'],
+				'location_address'	=>	$result['location_address'],
+				'location_region'	=>	$result['location_region'],
+				'location_postcode'	=>	$result['location_postcode'],
+				'location_phone_number'	=>	$result['location_phone_number']
+			);
+		}
+			
+		//add location_id to sesssion
+		if (!empty($this->input->post['locations'])) {
+			$this->session->set_userdata('nearest_location', $this->input->post('locations'));
+			$this->redirect('main/foods');  			
+		}
 
-		$this->form_validation->set_rules('locations', 'Locations', 'callback_locations_check');
 		//validate location drop-down
+		//$this->form_validation->set_rules('locations', 'Locations', 'callback_locations_check');
+
 		//if validation is FALSE
-		if ($this->form_validation->run() === FALSE)	{
-			//load home page content
-			$this->load->view('templates/header', $data);
-			$this->load->view('pages/'.$page, $data);
-			$this->load->view('templates/footer', $data);
-		} else {
-			//$newdata = array('location' => $locations);
-			//$this->session->set_userdata('location', $locations);
+		//if ($this->form_validation->run() === FALSE)	{
+		//} else {
 			//set location data to session
-			//$this->session->set_userdata('location', '$this->input->post('locations')');
-			//load food page content
-			$this->load->view('templates/header', $data);
-			$this->load->view('foods/index', $data);
-			$this->load->view('templates/footer');
-		}	
+			//$this->session->set_userdata('nearest_location', $this->input->post('locations'));
+		//}	
+		//load home page content
+		$this->load->view('main/header', $data);
+		$this->load->view('main/home', $data);
+		$this->load->view('main/footer', $data);
 	}
 	
-	public function locations_check($locations) {
-		if ($locations === '0') {
-			$this->form_validation->set_message('locations_check', 'Please select your nearest restaurant.');
-			return FALSE;
-		} else {
-			return TRUE;
+	public function aboutus() {
+		//check if file exists in views
+		if ( !file_exists('application/views/main/aboutus.php')) {
+			// Whoops, we don't have a page for that!
+			show_404();
 		}
+
+		$data['heading'] = 'About FoodIgniter!';
+
+		//load aboutus page content
+		$this->load->view('main/header', $data);
+		$this->load->view('main/aboutus', $data);
+		$this->load->view('main/footer', $data);
 	}
 }
