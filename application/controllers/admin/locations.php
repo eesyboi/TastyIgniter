@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 class Locations extends MX_Controller {
 
 	public function __construct() {
@@ -9,29 +10,53 @@ class Locations extends MX_Controller {
 		$this->load->model('Locations_model'); // load the locations model
 		$this->load->model('Tables_model');
 		$this->load->model('Countries_model');
+=======
+class Locations extends CI_Controller {
+
+	public function __construct() {
+		parent::__construct();
+		$this->load->library('user');
+		$this->load->library('location');
+		$this->load->library('pagination');
+		$this->load->model('Locations_model');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		$this->output->enable_profiler(TRUE); // for debugging profiler... remove later
 	}
 
 	public function index() {
+<<<<<<< HEAD
 		
 		if ( !file_exists('application/views/admin/locations.php')) { //check if file exists in views folder
 			show_404(); // Whoops, show 404 error page!
+=======
+			
+		//check if file exists in views
+		if ( !file_exists('application/views/admin/locations.php')) {
+			// Whoops, we don't have a page for that!
+			show_404();
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		}
 
 		if (!$this->user->islogged()) {  
   			redirect('admin/login');
 		}
 
+<<<<<<< HEAD
     	if (!$this->user->hasPermissions('access', 'admin/locations')) {
   			redirect('admin/permission');
 		}
 		
 		if ($this->session->flashdata('alert')) {
 			$data['alert'] = $this->session->flashdata('alert');  // retrieve session flashdata variable if available
+=======
+		if ($this->session->flashdata('alert')) {
+			$data['alert'] = $this->session->flashdata('alert');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		} else {
 			$data['alert'] = '';
 		}
 															
+<<<<<<< HEAD
 		$filter = array();
 		if ($this->input->get('page')) {
 			$filter['page'] = (int) $this->input->get('page');
@@ -54,10 +79,35 @@ class Locations extends MX_Controller {
 		//load category data into array
 		$data['locations'] = array();
 		$results = $this->Locations_model->getList($filter);
+=======
+		if ($this->uri->segment(3)) {
+			$page = $this->uri->segment(3);
+		} else {
+			$page = 0;
+		}
+		
+		$config['base_url'] = $this->config->site_url('admin/locations');
+		$config['total_rows'] = $this->Locations_model->record_count();
+		$config['per_page'] = 20;
+		$config['uri_segment'] = 3;
+		$choice = $config['total_rows'] / $config['per_page'];
+		$config['num_links'] = round($choice);
+		$config['use_page_numbers'] = TRUE;
+		
+		$this->pagination->initialize($config);
+
+		$data['title'] = 'Manage Restaurant Locations';
+		$data['text_no_locations'] = 'There are no restaurant location(s).';
+
+		//load category data into array
+		$data['locations'] = array();
+		$results = $this->Locations_model->getList($config['per_page'], $page);
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		foreach ($results as $result) {					
 			$data['locations'][] = array(
 				'location_id'			=> $result['location_id'],
 				'location_name'			=> $result['location_name'],
+<<<<<<< HEAD
 				'location_address_1'	=> $result['location_address_1'],
 				'location_city'			=> $result['location_city'],
 				'location_postcode'		=> $result['location_postcode'],
@@ -102,10 +152,26 @@ class Locations extends MX_Controller {
 
 		$data['pagination'] = array(
 			'info'		=> $this->pagination->create_infos(),
+=======
+				'location_address'		=> $result['location_address'],
+				'location_region'		=> $result['location_region'],
+				'location_city'			=> $result['location_city'],
+				'location_postcode'		=> $result['location_postcode'],
+				'location_phone_number'	=> $result['location_phone_number'],
+				'location_lat'			=> $result['location_lat'],
+				'location_lng'			=> $result['location_lng'],
+				'edit' 					=> $this->config->site_url('admin/locations/edit/' . $result['location_id'])
+			);
+		}
+				
+		$data['pagination'] = array(
+			'info'		=> '(Showing: ' . $config['per_page'] . ' of ' . $config['total_rows'] . ')',
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 			'links'		=> $this->pagination->create_links()
 		);
 
 		// check if POST add_location, validate fields and add Locations to model
+<<<<<<< HEAD
 		if ($this->input->post() && $this->_addLocation() === TRUE) {
 		
 			redirect('/admin/locations');
@@ -117,6 +183,14 @@ class Locations extends MX_Controller {
 			redirect('admin/locations');  			
 		}	
 
+=======
+		if (($this->input->post('submit') === 'Add') && ($this->_addLocation() === TRUE)) {
+		
+			$this->session->set_flashdata('alert', 'Location Added Sucessfully!');
+			redirect('/admin/locations');
+		}
+
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		//load home page content
 		$this->load->view('admin/header', $data);
 		$this->load->view('admin/locations', $data);
@@ -124,21 +198,35 @@ class Locations extends MX_Controller {
 	}
 
 	public function edit() {
+<<<<<<< HEAD
 		
 		if ( !file_exists('application/views/admin/location_edit.php')) { //check if file exists in views folder
 			show_404(); // Whoops, show 404 error page!
+=======
+		//check if file exists in views
+		if ( !file_exists('application/views/admin/location_edit.php')) {
+			// Whoops, we don't have a page for that!
+			show_404();
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		}
 		
 		if (!$this->user->islogged()) {  
   			redirect('admin/login');
 		}
 
+<<<<<<< HEAD
     	if (!$this->user->hasPermissions('access', 'admin/locations')) {
   			redirect('admin/permission');
 		}
 		
 		if ($this->session->flashdata('alert')) {
 			$data['alert'] = $this->session->flashdata('alert');  // retrieve session flashdata variable if available
+=======
+		$data['title'] = 'Edit Restaurant Location';
+
+		if ($this->session->flashdata('alert')) {
+			$data['alert'] = $this->session->flashdata('alert');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		} else { 
 			$data['alert'] = '';
 		}		
@@ -150,6 +238,7 @@ class Locations extends MX_Controller {
 		    redirect('admin/locations');
 		}
 		
+<<<<<<< HEAD
 		$result = $this->Locations_model->getLocation($location_id);
 		
 		if ($result) {
@@ -229,6 +318,39 @@ class Locations extends MX_Controller {
 					
 				redirect('admin/locations');
 			}
+=======
+		$data['action'] = $this->config->site_url('admin/locations/edit/' . $location_id);
+
+		$data['location_info'] = $this->Locations_model->getLocation($location_id);
+		if ($data['location_info']) {
+			$data['location_id'] 			= $data['location_info']['location_id'];
+			$data['location_name'] 			= $data['location_info']['location_name'];
+			$data['location_address'] 		= $data['location_info']['location_address'];
+			$data['location_region'] 		= $data['location_info']['location_region'];
+			$data['location_city'] 			= $data['location_info']['location_city'];
+			$data['location_postcode'] 		= $data['location_info']['location_postcode'];
+			$data['location_phone_number'] 	= $data['location_info']['location_phone_number'];
+			$data['location_lat'] 			= $data['location_info']['location_lat'];
+			$data['location_lng'] 			= $data['location_info']['location_lng'];
+		}
+
+		// check if POST add_food, validate fields and add Food to model
+		if (($this->input->post('submit') === 'Update') && ( ! $this->input->post('remove')) && ($this->_updateLocation($location_id) === TRUE)) {
+		
+			$this->session->set_flashdata('alert', 'Location Updated Sucessfully!');
+				
+			redirect('admin/locations');
+		}
+								
+		//Remove Food
+		if ($this->input->post('remove')) {
+					
+			$this->Locations_model->removeLocation($location_id);
+					
+			$this->session->set_flashdata('alert', 'Location Removed Sucessfully!');
+
+			redirect('admin/locations');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		}
 		
 		$this->load->view('admin/header', $data);
@@ -238,6 +360,7 @@ class Locations extends MX_Controller {
 
 	public function _addLocation() {
 									
+<<<<<<< HEAD
     	if (!$this->user->hasPermissions('modify', 'admin/locations')) {
 		
 			$this->session->set_flashdata('alert', '<p class="warning">Warning: You do not have permission to modify!</p>');
@@ -296,10 +419,35 @@ class Locations extends MX_Controller {
 				return TRUE;
 			}	
 		}
+=======
+		//form validation
+		$this->form_validation->set_rules('location_name', 'Location Name', 'trim|required|min_length[2]|max_length[45]');
+		$this->form_validation->set_rules('address[address_1]', 'Location Address', 'trim|required|min_length[2]|max_length[45]');
+		$this->form_validation->set_rules('address[region]', 'Location Region', 'trim|required|min_length[2]|max_length[45]');
+		$this->form_validation->set_rules('address[city]', 'Location City', 'trim|required|min_length[2]|max_length[45]');
+		$this->form_validation->set_rules('address[postcode]', 'Location Postcode', 'trim|required|min_length[2]|max_length[45]|callback_get_lat_lag');
+		$this->form_validation->set_rules('location_phone_number', 'Location Phone Number', 'trim|required|min_length[2]|max_length[15]');
+
+		//if validation is true
+  		if ($this->form_validation->run() === TRUE) {
+  		    	
+  		    //Sanitizing the POST values
+			$location_name 		= $this->input->post('location_name');
+			$address 			= $this->input->post('address');
+			$location_phone_number 	= $this->input->post('location_phone_number');			
+			$location_lat 		= $this->input->post('location_lat');			
+			$location_lng 		= $this->input->post('location_lng');					
+				
+			$this->Locations_model->addLocation($location_name, $address['address_1'], $address['region'], $address['city'], $address['postcode'], $location_phone_number, $location_lat, $location_lng);
+					
+			return TRUE;
+		}	
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 	}
 
 	public function _updateLocation($location_id) {
 									
+<<<<<<< HEAD
     	if (!$this->user->hasPermissions('modify', 'admin/locations')) {
 		
 			$this->session->set_flashdata('alert', '<p class="warning">Warning: You do not have permission to modify!</p>');
@@ -386,6 +534,37 @@ class Locations extends MX_Controller {
 		return TRUE;
 	}
 	
+=======
+		//form validation
+		$this->form_validation->set_rules('location_name', 'Location Name', 'trim|required|min_length[2]|max_length[45]');
+		$this->form_validation->set_rules('address[address_1]', 'Location Address', 'trim|required|min_length[2]|max_length[45]');
+		$this->form_validation->set_rules('address[region]', 'Location Region', 'trim|required|min_length[2]|max_length[45]');
+		$this->form_validation->set_rules('address[city]', 'Location City', 'trim|required|min_length[2]|max_length[45]');
+		$this->form_validation->set_rules('address[postcode]', 'Location Postcode', 'trim|required|min_length[2]|max_length[45]|callback_get_lat_lag');
+		$this->form_validation->set_rules('location_phone_number', 'Location Phone Number', 'trim|required|min_length[2]|max_length[15]');
+
+		//if validation is true
+  		if ($this->form_validation->run() === TRUE) {
+  		    	
+  		    //Sanitizing the POST values
+			$location_name 		= $this->input->post('location_name');
+			$address 			= $this->input->post('address');
+			$location_phone_number 	= $this->input->post('location_phone_number');			
+			$location_lat 		= $this->input->post('location_lat');			
+			$location_lng 		= $this->input->post('location_lng');					
+				
+			if ($this->input->post('default') === 'SET') {
+					
+				$this->location->setDefault($location_id);
+			}
+
+			$this->Locations_model->updateLocation($location_id, $location_name, $address['address_1'], $address['region'], $address['city'], $address['postcode'], $location_phone_number, $location_lat, $location_lng);
+					
+			return TRUE;
+		}	
+	}
+
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 	public function get_lat_lag() {
 		if (isset($_POST['address']) && is_array($_POST['address']) && !empty($_POST['address']['postcode'])) {			 
 
@@ -393,15 +572,24 @@ class Locations extends MX_Controller {
 			
 			$address = urlencode($address_string);
         	        
+<<<<<<< HEAD
 			$geocode = file_get_contents('http://maps.googleapis.com/maps/api/geocode/json?address='. $address .'&sensor=false&region=GB');
+=======
+			$geocode = file_get_contents('http://maps.googleapis.com/maps/api/geocode/json?address='. $address .'&sensor=false');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
         	
     		$output = json_decode($geocode);
     		
     		$status = $output->status;
     		
     		if ($status === 'OK') {
+<<<<<<< HEAD
 				$_POST['address']['location_lat'] = $output->results[0]->geometry->location->lat;
 				$_POST['address']['location_lng'] = $output->results[0]->geometry->location->lng;
+=======
+				$_POST['location_lat'] = $output->results[0]->geometry->location->lat;
+				$_POST['location_lng'] = $output->results[0]->geometry->location->lng;
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 			    return TRUE;
     		} else {
         		$this->form_validation->set_message('get_lat_lag', 'The Address you entered failed Geocoding, please enter a different address!');
@@ -409,6 +597,7 @@ class Locations extends MX_Controller {
     		}
         }
 	}
+<<<<<<< HEAD
 
 	public function validate_time($str) {
 		if ( ! preg_match('/^(\d+):(\d+)$/', $str)) {
@@ -442,3 +631,6 @@ class Locations extends MX_Controller {
 		return TRUE;
 	}
 }
+=======
+}
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e

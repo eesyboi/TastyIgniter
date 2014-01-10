@@ -9,12 +9,21 @@ class Customers_model extends CI_Model {
         return $this->db->count_all('customers');
     }
     
+<<<<<<< HEAD
 	public function getList($filter = array()) {
 		if ($filter['page'] !== 0) {
 			$filter['page'] = ($filter['page'] - 1) * $filter['limit'];
 		}
 		
         if ($this->db->limit($filter['limit'], $filter['page'])) {	
+=======
+	public function getList($limit = FALSE, $start = FALSE) {
+		if ($start !== 0) {
+			$start = ($start - 1) * $limit;
+		}
+			
+		if ($this->db->limit($limit, $start)) {
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 			$this->db->from('customers');
 
 			$query = $this->db->get();
@@ -40,14 +49,26 @@ class Customers_model extends CI_Model {
 		}
 	}
 
+<<<<<<< HEAD
 	public function getCustomerByEmail($email) {
 		$this->db->from('customers');		
 		$this->db->where('email', strtolower($email));
+=======
+	public function getCustomersByEmail($email) {
+		$this->db->from('customers');		
+		$this->db->where('email', $email);
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		
 		$query = $this->db->get();
 
 		if ($query->num_rows() === 1) {
+<<<<<<< HEAD
 			return $query->row_array();
+=======
+			$row = $query->row_array();
+			
+			return $row;
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		}
 	}
 
@@ -64,6 +85,7 @@ class Customers_model extends CI_Model {
 		}
 	}
 
+<<<<<<< HEAD
 	public function getCustomerAddresses($customer_id) {
 		$this->db->from('address');
 		$this->db->join('countries', 'countries.country_id = address.country_id', 'left');
@@ -124,13 +146,24 @@ class Customers_model extends CI_Model {
 
 			return $address_data;
 		}
+=======
+	public function getAddresses($customer_id = FALSE) {
+		$this->db->from('address');
+		$this->db->where('customer_id', $customer_id);
+
+		$query = $this->db->get();
+		return $query->result_array();
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 	}
 
 	public function getCustomerDefaultAddress($address_id, $customer_id) {
 		if (($address_id !== '0') && ($customer_id !== '0')) {
 			$this->db->from('address');
+<<<<<<< HEAD
 			$this->db->join('countries', 'countries.country_id = address.country_id', 'left');
 			
+=======
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 			$this->db->where('address_id', $address_id);
 			$this->db->where('customer_id', $customer_id);
 
@@ -141,6 +174,7 @@ class Customers_model extends CI_Model {
 			}
 		}
 	}
+<<<<<<< HEAD
 	
 	public function getAutoComplete($filter_data = array()) {
 		if (is_array($filter_data) && !empty($filter_data)) {
@@ -166,10 +200,39 @@ class Customers_model extends CI_Model {
 			
 			if ($this->db->affected_rows() > 0) {
 				return TRUE;
+=======
+
+	public function getSecurityQuestions($question_id = FALSE) {
+		if ($question_id === FALSE) {
+			$this->db->from('security_questions');
+
+			$query = $this->db->get();
+			return $query->result_array();
+		}
+
+		$this->db->from('security_questions');
+		$this->db->where('question_id', $question_id);
+
+		$query = $this->db->get();
+		if ($query->num_rows() > 0) {
+			return $query->row_array();
+		}
+	}
+	
+	public function updateCustomer($customer_id, $update = array()) {
+		if (!empty($update)) {
+			$this->db->where('customer_id', $customer_id);
+			
+			$this->db->update('customers', $update);
+			if ($this->db->affected_rows() > 0) {
+				$customer_id = $this->db->insert_id();			
+				return $customer_id;
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 			}
 		}
 	}	
 
+<<<<<<< HEAD
 	public function resetPassword($customer_id = FALSE, $email = FALSE, $security_question_id = FALSE, $security_answer = FALSE) {
 		
 		if ($customer_id != FALSE && $email != FALSE && $security_question_id != FALSE && $security_answer != FALSE) {
@@ -391,10 +454,66 @@ class Customers_model extends CI_Model {
 		if ($this->db->affected_rows() > 0) {
 			$address_id = $this->db->insert_id();			
 			return $address_id;
+=======
+	public function changePassword($customer_id, $password) {
+		if (!empty($password)) {
+			$update_data = array('password' => $password);
+				
+			$this->db->where('customer_id', $customer_id);
+			return $this->db->update('customers', $update_data);
+		}
+	}	
+
+	public function resetPassword($customer_id, $email, $security_question_id, $security_answer, $password) {
+		$reset_data = array(
+			'password' 				=> $password,
+			'security_question_id' 	=> $security_question_id,
+			'security_answer' 		=> $security_answer
+		);
+		
+		$this->db->where('customer_id', $customer_id);
+		$this->db->where('email', $email);
+		return $this->db->update('customers', $reset_data);
+	}
+
+	public function addCustomer($first_name, $last_name, $email, $password, $telephone, $security_question_id, $security_answer) {
+		$customer_data = array(
+			'first_name' 			=> $first_name,
+			'last_name' 			=> $last_name,
+			'email' 				=> $email,
+			'password' 				=> $password,
+			'telephone' 			=> $telephone,
+			'security_question_id' 	=> $security_question_id,
+			'security_answer' 		=> $security_answer
+		);
+		
+		return $this->db->insert('customers', $customer_data);
+	}
+
+	public function addAddress($customer_id, $address) {
+
+		if ($customer_id !== '') {
+		
+			$add_data = array(
+				'customer_id' 	=> $customer_id,
+				'address_1' 	=> $address['address_1'],
+				'address_2' 	=> $address['address_2'],
+				'city' 			=> $address['city'],
+				'postcode' 		=> $address['postcode'],
+				'country' 		=> $address['country']
+			);
+			
+			$this->db->insert('address', $add_data);
+			if ($this->db->affected_rows() > 0) {
+				$address_id = $this->db->insert_id();			
+				return $address_id;
+			}
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		}
 	}
 	
 	public function deleteCustomer($customer_id) {
+<<<<<<< HEAD
 
 		$this->db->where('customer_id', $customer_id);
 		
@@ -441,5 +560,13 @@ class Customers_model extends CI_Model {
 		return $this->email->send();
 		
 		//return $this->email->print_debugger();
+=======
+        //$result = mysql_query("DELETE FROM food_details WHERE food_id='$id'")
+		$delete_data = array(
+			'customer_id' => $customer_id
+		);
+		
+		return $this->db->delete('customers', $delete_data);
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 	}
 }

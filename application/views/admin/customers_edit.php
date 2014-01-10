@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <div class="box">
 	<div id="update-box" class="content">
 	<h2>CUSTOMER UPDATE: <?php echo $first_name; ?> <?php echo $last_name; ?></h2>
@@ -29,6 +30,32 @@
 		</tr>
 		<tr>
     		<td><b>Security Question:</b></td>
+=======
+<div id="content">
+	<hr>
+	<h2 align="center">EDIT CUSTOMER INFO (<?php echo $first_name; ?> <?php echo $last_name; ?>)</h2>
+	<hr>
+	<form method="post" accept-charset="utf-8" action="<?php echo $action; ?>">
+	<table align="center">
+		<tr>
+    		<td>First Name:</td>
+    		<td><input type="text" name="first_name" value="<?php echo set_value('first_name', $first_name); ?>" class="textfield" /></td>
+		</tr>
+		<tr>
+    		<td>Last Name:</td>
+    		<td><input type="text" name="last_name" value="<?php echo set_value('last_name', $last_name); ?>" class="textfield" /></td>
+		</tr>
+		<tr>
+    		<td>Email:</td>
+    		<td><?php echo $email; ?></td>
+		</tr>
+		<tr>
+    		<td>Telephone:</td>
+    		<td><input type="text" name="telephone" value="<?php echo set_value('telephone', $telephone); ?>" class="textfield" /></td>
+		</tr>
+		<tr>
+    		<td>Security Question:</td>
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
     		<td><select name="security_question">
     		<option value=""> please select </option>
     		<?php foreach ($questions as $question) { ?>
@@ -41,6 +68,7 @@
     		</select></td>
 		</tr>
 		<tr>
+<<<<<<< HEAD
     		<td><b>Security Answer:</b></td>
     		<td><input type="text" name="security_answer" value="<?php echo set_value('security_answer', $security_answer); ?>" class="textfield" /></td>
 		</tr>
@@ -138,4 +166,23 @@
 	</div>	
 	</form>
 	</div>
+=======
+    		<td>Security Answer:</td>
+    		<td><input type="text" name="security_answer" value="<?php echo set_value('security_answer', $security_answer); ?>" class="textfield" /></td>
+		</tr>
+  		<tr>
+  			<td>Reset Password:</td>
+    		<td><input type="checkbox" name="reset_password" value="1" /></td>
+  		</tr>
+    	<tr>
+	    	<td><b>Delete:</b></td>
+    		<td><input type="checkbox" name="delete" value="1" /></td>
+			<td></td>
+	    </tr>
+		<tr>
+   			<td colspan="2" align="right"><input type="submit" name="submit" value="Update" /></td>
+		</tr>
+	</table>
+	</form>
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 </div>

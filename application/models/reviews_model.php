@@ -5,6 +5,7 @@ class Reviews_model extends CI_Model {
 		$this->load->database();
 	}
 
+<<<<<<< HEAD
     public function record_count() {
         return $this->db->count_all('reviews');
     }
@@ -33,10 +34,16 @@ class Reviews_model extends CI_Model {
 			$this->db->where('review_status', '1');
 		}
 		
+=======
+	public function getRatings() {
+		$this->db->from('ratings');
+
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		$query = $this->db->get();
 		return $query->result_array();
 	}
 
+<<<<<<< HEAD
 	public function getReview($review_id) {
 		$this->db->from('reviews');
 		//$this->db->join('customers', 'customers.customer_id = reviews.customer_id', 'left');
@@ -77,6 +84,22 @@ class Reviews_model extends CI_Model {
 		
 		$query = $this->db->get();
 		
+=======
+	public function getReviews() {
+		$this->db->from('reviews');
+
+		$query = $this->db->get();
+		return $query->result_array();
+	}
+
+	public function checkReview($food_id, $customer_id) {
+		$this->db->from('reviews');
+
+		$this->db->where('food_id', $food_id);
+		$this->db->where('customer_id', $customer_id);
+		
+		$query = $this->db->get();
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		if ($query->num_rows() > 0) {
 		
 			return $query->row_array();
@@ -88,6 +111,7 @@ class Reviews_model extends CI_Model {
 		}
 	}
 
+<<<<<<< HEAD
 	public function reviewMenu($customer_id, $customer_name, $menu_id, $rating_id, $review_text, $date_added) {
 	
 		$this->load->model('Cart_model'); // load the menus model
@@ -217,5 +241,29 @@ class Reviews_model extends CI_Model {
 		$this->db->where('review_id', $review_id);
 			
 		return $this->db->delete('reviews');
+=======
+	public function foodReview($food_id, $customer_id, $rating_id) {
+	
+		$review_data = $this->checkReview($food_id, $customer_id);
+		
+		if ($review_data) {
+ 					
+			$this->db->where('review_id', $review_data['review_id']);
+			$this->db->where('customer_id', $review_data['customer_id']);
+			$this->db->where('food_id', $review_data['food_id']);
+			return $this->db->update('reviews', $update = array('food_rating' => $rating_id));
+
+		}
+		
+		if ( ! $review_data && $customer_id !== FALSE) {
+			
+			$update['customer_id'] = $customer_id;
+			$update['food_id'] = $food_id;
+			$update['food_rating'] = $rating_id;
+
+			return $this->db->insert('reviews', $update);
+					
+		}
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 	}
 }

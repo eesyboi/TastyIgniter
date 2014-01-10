@@ -5,6 +5,7 @@ class Staffs_model extends CI_Model {
 		$this->load->database();
 	}
 
+<<<<<<< HEAD
     public function record_count() {
         return $this->db->count_all('staffs');
     }
@@ -18,6 +19,11 @@ class Staffs_model extends CI_Model {
 			$this->db->from('staffs');
 			$this->db->join('users', 'users.staff_id = staffs.staff_id', 'left');
 			$this->db->join('departments', 'departments.department_id = staffs.staff_department', 'left');
+=======
+	public function getStaffs($staffs = FALSE) {
+		if ($staffs === FALSE) {
+			$this->db->from('staffs');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 			$this->db->join('locations', 'locations.location_id = staffs.staff_location', 'left');
 
 			$query = $this->db->get();
@@ -25,6 +31,7 @@ class Staffs_model extends CI_Model {
 		}
 	}
 
+<<<<<<< HEAD
 	public function getStaffs() {
 		$this->db->from('staffs');
 		$this->db->join('users', 'users.staff_id = staffs.staff_id', 'left');
@@ -37,6 +44,8 @@ class Staffs_model extends CI_Model {
 		return $query->result_array();
 	}
 
+=======
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 	public function getStaff($staff_id = FALSE) {
 		$this->db->from('staffs');		
 		
@@ -49,6 +58,7 @@ class Staffs_model extends CI_Model {
 		}
 	}
 
+<<<<<<< HEAD
 	public function getStaffUser($staff_id = FALSE) {
 		$this->db->from('users');		
 		
@@ -163,6 +173,27 @@ class Staffs_model extends CI_Model {
 
 		if ($this->db->affected_rows() > 0) {
 			return TRUE;
+=======
+	public function updateStaff($staff_id, $update_data = array()) {
+		if (!empty($update_data)) {
+			
+			$this->db->where('staff_id', $staff_id);
+			return $this->db->update('staffs', $update_data);
+		
+		}
+	}	
+
+	public function addStaff($staff_details) {
+
+		if (!empty($staff_details)) {
+			$this->db->insert('staffs', $staff_details);
+		
+			if ($this->db->affected_rows() > 0) {
+				$staff_id = $this->db->insert_id();
+				
+				return $staff_id;
+			}
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		}
 	}
 }

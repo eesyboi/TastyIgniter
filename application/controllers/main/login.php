@@ -1,5 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
+<<<<<<< HEAD
 class Login extends MX_Controller {
 
 	public function index() {
@@ -12,10 +13,25 @@ class Login extends MX_Controller {
 
 		if ($this->session->flashdata('alert')) {
 			$data['alert'] = $this->session->flashdata('alert');  								// retrieve session flashdata variable if available
+=======
+class Login extends CI_Controller {
+
+	public function __construct() {
+		parent::__construct();
+		//$this->load->model('Customer_model');
+		$this->output->enable_profiler(TRUE); // for debugging profiler... remove later
+	}
+
+	public function index() {
+
+		if ($this->session->flashdata('alert')) {
+			$data['alert'] = $this->session->flashdata('alert');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		} else {
 			$data['alert'] = '';
 		}
 		
+<<<<<<< HEAD
 		if ($this->customer->islogged()) { 														// checks if customer is logged in then redirect to account page.	
   			redirect('account');
 		}
@@ -47,11 +63,33 @@ class Login extends MX_Controller {
 					$this->session->set_flashdata('alert', $this->lang->line('text_invalid_login'));	// display error message and redirect to account login page
   					redirect('account/login');
     			} else {																		// else if login was successful redirect to account page
+=======
+		if ($this->customer->islogged()) {  
+  			redirect('account');
+		}
+
+		$data['heading'] = 'Account Login';
+
+		//$data['heading'] = 'Checkout';
+		if ($this->input->post('submit') === 'Login') {
+			$this->form_validation->set_rules('email', 'Email Address', 'trim|required|valid_email');
+			$this->form_validation->set_rules('password', 'Password', 'trim|required|min_length[6]|max_length[32]|md5');
+
+  			if ($this->form_validation->run() === TRUE) {
+				$email = $this->input->post('email');
+				$password = $this->input->post('password');
+			
+				if ($this->customer->login($email, $password) === FALSE) {
+					$this->session->set_flashdata('alert', 'Username and Password not found');
+  					redirect('account/login');
+    			} else {
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
   					redirect('account');
   				}
     		}
 		}
 		
+<<<<<<< HEAD
 		// pass array $data and load view files
 		$this->load->view('main/header', $data);
 		$this->load->view('main/login', $data);
@@ -88,9 +126,21 @@ class Login extends MX_Controller {
   				
   				return TRUE;		
 			}
+=======
+		//check if file exists in views
+		if ( !file_exists('application/views/main/login.php')) {
+			// Whoops, we don't have a page for that!
+			show_404();
+		} else {
+			$this->load->template('main/login', $data);
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		}
 	}
 }
 
 /* End of file login.php */
+<<<<<<< HEAD
 /* Location: ./application/controllers/main/login.php */
+=======
+/* Location: ./application/controllers/account_login.php */
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e

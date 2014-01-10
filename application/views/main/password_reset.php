@@ -1,4 +1,5 @@
 <div class="content">
+<<<<<<< HEAD
 	<form method="post" accept-charset="utf-8" action="<?php echo current_url(); ?>">
     <table border="0" cellpadding="2" width="" align="center" id="email-check">
 		<?php if (empty($customer_email)) { ?>
@@ -10,10 +11,21 @@
     	</tr>
   		<tr>
     		<td align="right"><label for="security_question"><?php echo $entry_s_question; ?></label></td>
+=======
+	<?php echo form_open('main/password_reset') ?>
+    <table border="0" cellpadding="2" width="" align="center" id="email-check">
+     	<tr>
+        	<td align="right"><b>Email:</b></td>
+        	<td><input name="email" type="text" value="<?php echo set_value('email'); ?>" class="textfield" id="email" /></td>
+    	</tr>
+     	<tr>
+            <td align="right"><b>Your Security Question:</b></td>
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
     		<td><select name="security_question">
     		<?php foreach ($questions as $question) { ?>
     			<option value="<?php echo $question['id']; ?>"><?php echo $question['text']; ?></option>
     		<?php } ?>
+<<<<<<< HEAD
     		</select><br />
     		<?php echo form_error('security_question', '<span class="error">', '</span>'); ?></td>
 	 	</tr>
@@ -31,3 +43,25 @@
     </table>
 	</form>
 </div>
+=======
+    		</select></td>
+     	</tr>
+     	<tr>
+            <td align="right"><b>Your Security Answer:</b></td>
+        	<td><input type="text" name="security_answer" class="textfield" id="security-answer" /></td>
+     	</tr>
+     	<tr>
+            <td align="right"><b>New Password:</b></td>
+        	<td><input type="password" name="new_password" class="textfield" id="new-password" /></td>
+     	</tr>
+     	<tr>
+            <td align="right"><b>Confirm New Password:</b></td>
+        	<td><input type="password" name="confirm_new_password" class="textfield" id="confirm-new-password" /></td>
+     	</tr>
+	    <tr>
+        	<td colspan="2" align="right"><input type="submit" name="submit" value="Reset Password" /></td>
+    	</tr>
+    </table>
+	</form>
+</div>
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e

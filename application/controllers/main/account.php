@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php
 
 class Account extends MX_Controller {
@@ -19,10 +20,36 @@ class Account extends MX_Controller {
 
 		if ($this->session->flashdata('alert')) {
 			$data['alert'] = $this->session->flashdata('alert');  								// retrieve session flashdata variable if available
+=======
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+class Account extends CI_Controller {
+
+	public function __construct() {
+		parent::__construct();
+		//$this->load->library('customer');
+		$this->load->model('Customers_model');
+		$this->output->enable_profiler(TRUE); // for debugging profiler... remove later
+	}
+
+	public function index() {
+			
+		//check if file exists in views
+		if ( !file_exists('application/views/main/account.php')) {
+			// Whoops, we don't have a page for that!
+			show_404();
+		}
+
+		$data['heading'] = 'My Account';
+		$data['no_default_address'] = 'You don\'t have a default address';
+
+		if ($this->session->flashdata('alert')) {
+			$data['alert'] = $this->session->flashdata('alert');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		} else {
 			$data['alert'] = '';
 		}
 
+<<<<<<< HEAD
 		if (!$this->customer->isLogged()) {  													// if customer is not logged in redirect to account login page
   			redirect('account/login');
 		}
@@ -74,6 +101,24 @@ class Account extends MX_Controller {
 		
 		$data['customer_info'] = array();
 		$data['customer_info'] = array(															// create array of customer data to pass to view
+=======
+		if (!$this->customer->isLogged()) {  
+  			redirect('account/login');
+		}
+		
+		$this->load->library('cart');
+		$this->load->library('currency');
+		$data['cart_items'] = $this->cart->total_items();
+		$data['cart_total'] = $this->currency->symbol() . $this->cart->format_number($this->cart->total());
+
+		//store customer data in array
+		$data['customer_info'] = array();
+		$result = $this->Customers_model->getCustomer($this->customer->getId());
+
+		$question_result = $this->Customers_model->getSecurityQuestions($result['security_question_id']); 
+		
+		$data['customer_info'] = array(
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 			'first_name' 		=> $result['first_name'],
 			'last_name' 		=> $result['last_name'],
 			'email' 			=> $result['email'],
@@ -82,10 +127,18 @@ class Account extends MX_Controller {
 			'security_answer' 	=> $result['security_answer']
 		);
 
+<<<<<<< HEAD
 		$data['address_info'] = array();
 		$result = $this->Customers_model->getCustomerAddress($this->customer->getId(), $this->customer->getAddressId());			// retrieve customer address data based on customer address id from getAddress method in Customers model
 		if ($result) {
 			$data['address_info'] = array(														// create array of customer address data to pass to view
+=======
+		//store address data in array
+		$data['address_info'] = array();
+		$result = $this->Customers_model->getAddress($this->customer->getAddressId());
+		if ($result) {
+			$data['address_info'] = array(
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 				'address_1' 	=> $result['address_1'],
 				'address_2' 	=> $result['address_2'],
 				'city' 			=> $result['city'],
@@ -94,9 +147,14 @@ class Account extends MX_Controller {
 			);
 		}
 
+<<<<<<< HEAD
 		// pass array $data and load view files
 		$this->load->view('main/header', $data);
 		$this->load->view('main/content_left');
+=======
+			
+		$this->load->view('main/header', $data);
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		$this->load->view('main/account', $data);
 		$this->load->view('main/footer');
 	}

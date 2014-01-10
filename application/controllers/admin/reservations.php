@@ -1,37 +1,64 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+<<<<<<< HEAD
 class Reservations extends MX_Controller {
+=======
+class Reservations extends CI_Controller {
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 
 	private $error = array();
 
 	public function __construct() {
+<<<<<<< HEAD
 		parent::__construct(); //  calls the constructor
 		$this->load->library('user');
 		$this->load->library('pagination');
 		$this->load->model('Reservations_model');
 		$this->load->model('Statuses_model');
+=======
+		parent::__construct();
+		$this->load->library('user');
+		$this->load->model('Admin_model');
+		//$this->load->library('upload');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		$this->output->enable_profiler(TRUE); // for debugging profiler... remove later
 	}
 
 	public function index() {
+<<<<<<< HEAD
 	
 		if ( !file_exists('application/views/admin/reservations.php')) { //check if file exists in views folder
 			show_404(); // Whoops, show 404 error page!
+=======
+		//check if file exists in views
+		if ( !file_exists('application/views/admin/reservations.php')) {
+			// Whoops, we don't have a page for that!
+			show_404();
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		}
 
 		if (!$this->user->islogged()) {  
   			redirect('admin/login');
 		}
 		
+<<<<<<< HEAD
     	if (!$this->user->hasPermissions('access', 'admin/reservations')) {
   			redirect('admin/permission');
 		}
 		
 		if ($this->session->flashdata('alert')) {
 			$data['alert'] = $this->session->flashdata('alert');  // retrieve session flashdata variable if available
+=======
+		$data['title'] = 'Reservations Management';
+		$data['text_no_reservations'] = 'There are no reservation(s).';
+		
+		if ($this->session->flashdata('alert')) {
+			$data['alert'] = $this->session->flashdata('alert');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		} else { 
 			$data['alert'] = '';
 		}
 
+<<<<<<< HEAD
 		$filter = array();
 		if ($this->input->get('page')) {
 			$filter['page'] = (int) $this->input->get('page');
@@ -85,11 +112,29 @@ class Reservations extends MX_Controller {
 			
 			redirect('admin/reservations');
 		}	
+=======
+		//load category data into array
+		$data['reservations'] = array();
+		$results = $this->Admin_model->getReservations();
+		foreach ($results as $result) {					
+			$data['reservations'][] = array(
+				'reservation_id'	=>	$result['reservation_id'],
+				'full_name'			=>	$result['full_name'],
+				'reservation_date_time'	=>	$result['reservation_date_time'],
+				'email'				=>	$result['email'],
+				'telephone'			=>	$result['telephone'],
+				'location'			=>	$result['location'],
+				'edit'				=>	$result['edit']
+			);
+		}
+				
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 
 		$this->load->view('admin/header', $data);
 		$this->load->view('admin/reservations', $data);
 		$this->load->view('admin/footer');
 	}	
+<<<<<<< HEAD
 
 	public function edit() {
 		
@@ -254,4 +299,6 @@ class Reservations extends MX_Controller {
 				
 		return TRUE;
 	}
+=======
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 }

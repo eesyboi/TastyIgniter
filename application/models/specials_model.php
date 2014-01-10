@@ -5,6 +5,7 @@ class Specials_model extends CI_Model {
 		$this->load->database();
 	}
 
+<<<<<<< HEAD
     public function record_count() {
         return $this->db->count_all('menus_specials');
     }
@@ -32,18 +33,33 @@ class Specials_model extends CI_Model {
 			
 			$this->db->where('start_date <=', 'NOW()', FALSE);
 			$this->db->where('end_date >=', 'NOW()', FALSE);
+=======
+	public function getList($limit = FALSE, $start = FALSE) {
+	}
+	
+	public function getDeals($deals = FALSE) {
+		if ($deals === FALSE) {
+			$this->db->from('specials');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 
 			$query = $this->db->get();
 			return $query->result_array();
 		}
 	}
 
+<<<<<<< HEAD
 	public function getSpecial($special_id) {
 		
 		$this->db->from('menus_specials');
 		//$this->db->join('menus', 'menus.menu_id = menus_specials.menu_id', 'left');
 		
 		$this->db->where('special_id', $special_id);
+=======
+	public function getDeal($deal_id) {
+		
+		$this->db->from('specials');
+		$this->db->where('deal_id', $deal_id);
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		$query = $this->db->get();
 		
 		if ($query->num_rows() > 0) {
@@ -51,6 +67,7 @@ class Specials_model extends CI_Model {
 		}
 	}
 
+<<<<<<< HEAD
 	public function getMainSpecial($special_id) {
 		
 		$this->db->select('menu_id, special_id, start_date, end_date, special_price');
@@ -188,5 +205,40 @@ class Specials_model extends CI_Model {
 		if ($this->db->affected_rows() > 0) {
 			return TRUE;
 		}
+=======
+	public function addDeal($deal_name, $deal_description, $deal_price, $start_date, $end_date, $deal_photo) {
+		$add_data = array(
+			'deal_name' 		=> $deal_name,
+			'deal_description' 	=> $deal_description,
+			'deal_price' 		=> $deal_price,
+			'start_date' 		=> $start_date,
+			'end_date' 			=> $end_date,
+			'deal_photo' 		=> $deal_photo
+		);
+		
+		return $this->db->insert('specials', $add_data);
+	}
+
+	public function updateDeal($deal_id, $deal_name, $deal_description, $deal_price, $start_date, $end_date, $deal_photo) {
+		if ($deal_photo !== '') {
+			$update_data['deal_photo'] = $deal_photo;
+		}
+		
+		$update_data['deal_name'] 		= $deal_name;
+		$update_data['deal_description'] = $deal_description;
+		$update_data['deal_price'] 		= $deal_price;
+		$update_data['start_date'] 		= $start_date;
+		$update_data['end_date'] 		= $end_date;
+		
+		$this->db->where('deal_id', $deal_id);
+		return $this->db->update('specials', $update_data);
+	}
+	public function deleteDeal($deal_id) {
+		$remove_data = array(
+			'deal_id' => $deal_id
+		);
+			
+		return $this->db->delete('specials', $remove_data);
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 	}
 }

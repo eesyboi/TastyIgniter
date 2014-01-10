@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 class Settings extends MX_Controller {
 
 	public function __construct() {
@@ -8,29 +9,54 @@ class Settings extends MX_Controller {
 		$this->load->model('Countries_model');
 		$this->load->model('Currencies_model');
 		$this->load->model('Statuses_model');	    
+=======
+class Settings extends CI_Controller {
+
+	public function __construct() {
+		parent::__construct();
+		$this->load->library('user');
+		$this->load->library('currency');
+	    $this->load->helper('date');
+		$this->load->model('Locations_model');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		$this->output->enable_profiler(TRUE); // for debugging profiler... remove later
 	}
 
 	public function index() {
 			
+<<<<<<< HEAD
 		if ( !file_exists('application/views/admin/settings.php')) { //check if file exists in views folder
 			show_404(); // Whoops, show 404 error page!
+=======
+		//check if file exists in views
+		if ( !file_exists('application/views/admin/settings.php')) {
+			// Whoops, we don't have a page for that!
+			show_404();
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		}
 
 		if (!$this->user->islogged()) {  
   			redirect('admin/login');
 		}
 
+<<<<<<< HEAD
     	if (!$this->user->hasPermissions('access', 'admin/settings')) {
   			redirect('admin/permission');
 		}
 		
 		if ($this->session->flashdata('alert')) {
 			$data['alert'] = $this->session->flashdata('alert');  // retrieve session flashdata variable if available
+=======
+		$data['title'] = 'Settings';
+
+		if ($this->session->flashdata('alert')) {
+			$data['alert'] = $this->session->flashdata('alert');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		} else {
 			$data['alert'] = '';
 		}
 
+<<<<<<< HEAD
 		$data['heading'] 			= 'Settings';
 		$data['sub_menu_update'] 	= 'Update';
 
@@ -218,10 +244,20 @@ class Settings extends MX_Controller {
 			$data['countries'][] = array(
 				'country_id'	=>	$result['country_id'],
 				'name'			=>	$result['country_name'],
+=======
+				
+		$data['locations'] = array();
+		$results = $this->Locations_model->getLocations();
+		foreach ($results as $result) {					
+			$data['locations'][] = array(
+				'location_id'	=>	$result['location_id'],
+				'location_name'	=>	$result['location_name'],
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 			);
 		}
 
 		$data['currencies'] = array();
+<<<<<<< HEAD
 		$currencies = $this->Currencies_model->getCurrencies();
 		foreach ($currencies as $currency) {					
 			$data['currencies'][] = array(
@@ -251,11 +287,22 @@ class Settings extends MX_Controller {
 			redirect('admin/settings');
 		}
 						
+=======
+		$currencies = $this->currency->getCurrencies();
+		foreach ($currencies as $currency) {					
+			$data['currencies'][] = array(
+				'currency_id'	=>	$currency['currency_id'],
+				'currency_code'	=>	$currency['currency_code'],
+			);
+		}
+
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		//load home page content
 		$this->load->view('admin/header', $data);
 		$this->load->view('admin/settings', $data);
 		$this->load->view('admin/footer');
 	}
+<<<<<<< HEAD
 
 	public function _updateSettings() {
     	if (!$this->user->hasPermissions('modify', 'admin/settings')) {
@@ -382,4 +429,6 @@ class Settings extends MX_Controller {
       		//return TRUE;
       	}
     }
+=======
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 }

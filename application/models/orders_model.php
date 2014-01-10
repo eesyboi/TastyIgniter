@@ -9,6 +9,7 @@ class Orders_model extends CI_Model {
         return $this->db->count_all('orders');
     }
     
+<<<<<<< HEAD
     public function assigned_record_count($filter = array()) {
 		if (!empty($filter['staff_id'])) {
 			$this->db->where('order_staff_id', $filter['staff_id']);
@@ -34,6 +35,18 @@ class Orders_model extends CI_Model {
 			if (!empty($filter['staff_id'])) {
 				$this->db->where('staff_id', $filter['staff_id']);
 			}
+=======
+	public function getList($limit = FALSE, $start = FALSE) {
+		if ($start !== 0) {
+			$start = ($start - 1) * $limit;
+		}
+			
+		if ($this->db->limit($limit, $start)) {
+			$this->db->from('orders');
+			$this->db->join('order_status', 'order_status.order_status_id = orders.order_status_id', 'left');
+			$this->db->join('staffs', 'staffs.staff_id = orders.staff_id', 'left');
+			$this->db->join('locations', 'locations.location_id = orders.order_location', 'left');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 
 			$query = $this->db->get();
 			return $query->result_array();
@@ -42,10 +55,16 @@ class Orders_model extends CI_Model {
 	
 	public function getOrders() {
 		$this->db->from('orders');
+<<<<<<< HEAD
 		$this->db->join('statuses', 'statuses.status_id = orders.status_id', 'left');
 		$this->db->join('staffs', 'staffs.staff_id = orders.order_staff_id', 'left');
 		$this->db->join('locations', 'locations.location_id = orders.order_location_id', 'left');
 		$this->db->order_by('order_id', 'DESC');
+=======
+		$this->db->join('order_status', 'order_status.order_status_id = orders.order_status_id', 'left');
+		$this->db->join('staffs', 'staffs.staff_id = orders.staff_id', 'left');
+		$this->db->join('locations', 'locations.location_id = orders.order_location', 'left');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 
 		$query = $this->db->get();
 		return $query->result_array();
@@ -54,10 +73,17 @@ class Orders_model extends CI_Model {
 	public function getAdminOrder($order_id = FALSE) {
 		if ($order_id !== FALSE) {
 			$this->db->from('orders');
+<<<<<<< HEAD
 			$this->db->join('statuses', 'statuses.status_id = orders.status_id', 'left');
 			$this->db->join('staffs', 'staffs.staff_id = orders.order_staff_id', 'left');
 			//$this->db->join('locations', 'locations.location_id = orders.order_location_id', 'left');
 			//$this->db->join('address', 'address.address_id = orders.order_address_id', 'left');
+=======
+			$this->db->join('order_status', 'order_status.order_status_id = orders.order_status_id', 'left');
+			$this->db->join('staffs', 'staffs.staff_id = orders.staff_id', 'left');
+			$this->db->join('locations', 'locations.location_id = orders.order_location', 'left');
+			$this->db->join('address', 'address.address_id = orders.address_id', 'left');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		
 			$this->db->where('order_id', $order_id);			
 			$query = $this->db->get();
@@ -68,6 +94,7 @@ class Orders_model extends CI_Model {
 		}
 	}
 
+<<<<<<< HEAD
 	public function getMainOrders($customer_id = FALSE) {
 		if ($customer_id !== FALSE) {
 			$this->db->from('orders');
@@ -86,6 +113,12 @@ class Orders_model extends CI_Model {
 		$this->db->from('orders');
 		$this->db->where('order_id', $order_id);
 		$this->db->where('order_customer_id', $customer_id);
+=======
+	public function getOrder($order_id, $customer_id) {
+		$this->db->from('orders');
+		$this->db->where('order_id', $order_id);
+		$this->db->where('customer_id', $customer_id);
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 			
 		$query = $this->db->get();
 		if ($query->num_rows() > 0) {
@@ -93,14 +126,21 @@ class Orders_model extends CI_Model {
 		}
 	}
 
+<<<<<<< HEAD
 	public function getOrderMenus($order_id) {
 		$this->db->from('order_menus');
 		$this->db->where('order_id', $order_id);
 			
+=======
+	public function getOrderStatuses($order_status_id = FALSE) {
+		$this->db->from('order_status');
+		
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 		$query = $this->db->get();
 		return $query->result_array();
 	}
 
+<<<<<<< HEAD
 	public function updateOrder($update = array()) {
 		
 		if (!empty($update['status_id'])) {
@@ -366,5 +406,81 @@ class Orders_model extends CI_Model {
 		}			
 		
 		return $notify;
+=======
+	public function addOrder($order_details = array()) {
+
+		if (!empty($order_details)) {
+			$this->db->insert('orders', $order_details);
+		
+			if ($this->db->affected_rows() > 0) {
+				$order_id = $this->db->insert_id();
+				
+				$this->confirmOrder($order_id, $order_details['customer_id']);
+
+				return $order_id;
+			}
+		}
+	}	
+
+	public function confirmOrder($order_id, $customer_id) {
+		
+		$order_info = $this->getOrder($order_id, $customer_id);
+		
+		if ($order_info && $order_info['order_status_id'] === '0') {
+			
+			$config = Array(
+    			'protocol' => 'smtp',
+    			'smtp_host' => 'ssl://smtp.googlemail.com',
+    			'smtp_port' => 465,
+    			'smtp_user' => 'eesyboi@gmail.com',
+    			'smtp_pass' => 'Letmein8',
+    			'mailtype'  => 'html', 
+    			'charset'   => 'iso-8859-1',
+				'wordwrap' 	=> 'TRUE',
+				'validate' 	=> 'TRUE',
+				'priority' 	=> '3'
+			);
+			
+			$this->load->library('email', $config);
+			$this->email->set_newline("\r\n");
+			$this->lang->load('main/checkout');
+	
+			$data['heading'] = 'Order Successful';
+			$data['message'] = sprintf($this->lang->line('text_success_message'), $order_info['order_id'], $this->config->site_url('account_orders/' . $order_info['order_id']));
+			$message = $this->load->view('main/order_email', $data, TRUE);
+
+			$this->email->from('store@email.com', 'TastyIgniter');
+			$this->email->to($order_info['email']);
+
+			$this->email->subject('Order Confirmation');
+			$this->email->message($message);
+
+			if ( ! $this->email->send()) {
+				$notify = '0';
+			} else {
+				$notify = '1';
+			}			
+		
+			$update_data = array(
+               'order_status_id' 	=> '1',
+               'notify' 	=> $notify
+            );
+
+			$this->db->where('order_id', $order_id);
+			$this->db->update('orders', $update_data); 
+			
+			return TRUE;
+		}
+		
+	}
+
+	public function updateOrder($order_id, $update_data = array()) {
+		if (!empty($update_data)) {
+			
+			$this->db->where('order_id', $order_id);
+			return $this->db->update('orders', $update_data);
+		
+		}
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 	}
 }

@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 <?php 
 
 class Orders extends MX_Controller {
@@ -70,6 +71,30 @@ class Orders extends MX_Controller {
 		$this->load->view('main/content_left');
 		$this->load->view('main/orders', $data);
 		$this->load->view('main/footer');
+=======
+<?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
+
+class Welcome extends CI_Controller {
+
+	/**
+	 * Index Page for this controller.
+	 *
+	 * Maps to the following URL
+	 * 		http://example.com/index.php/welcome
+	 *	- or -  
+	 * 		http://example.com/index.php/welcome/index
+	 *	- or -
+	 * Since this controller is set as the default controller in 
+	 * config/routes.php, it's displayed at http://example.com/
+	 *
+	 * So any other public methods not prefixed with an underscore will
+	 * map to /index.php/welcome/<method_name>
+	 * @see http://codeigniter.com/user_guide/general/urls.html
+	 */
+	public function index()
+	{
+		$this->load->view('welcome_message');
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 	}
 }
 

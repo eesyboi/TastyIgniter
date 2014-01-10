@@ -1,10 +1,6 @@
 <?php if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-<<<<<<< HEAD
-class Welcome extends MX_Controller {
-=======
 class Welcome extends CI_Controller {
->>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 
 	/**
 	 * Index Page for this controller.

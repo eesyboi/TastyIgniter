@@ -1,4 +1,5 @@
 <?php
+<<<<<<< HEAD
 $lang['text_heading'] 			= 'Checkout';
 $lang['text_checkout'] 			= 'Almost there, Please confirm your details and proceed to payment.';
 $lang['text_opened'] 			= '<b>We are currently open</b>';
@@ -64,6 +65,10 @@ $lang['text_greetings'] 		= 'Hello %s,';
 $lang['text_success_message'] 	= 'Your order has been received and will be with you shortly.<br /><a href="%s">Click here</a> to view your order progress.<br />Thanks for shopping with us online!';
 $lang['text_order_info'] 		= 'Your order number is <b>%s</b> <br />This is a %s order. <br /><br /><b>Order Date:</b> %s <br /><b>Delivery Time:</b> %s <br /><b>Payment Method:</b> %s ';
 $lang['text_order_total'] 		= '<br /><br />Order Total: <b>%s.</b>';
+=======
+
+$lang['text_success_message'] = '<p>Your order %s has been successfully placed.</p><p><a href="%s">Click here</a> to view your order progress.</p><p>Thanks for shopping with us online!</p>';
+>>>>>>> 0d7f0809e8d8939f91f8bd00c1efa703e8da114e
 
 /* End of file checkout_lang.php */
 /* Location: ./application/language/english/main/checkout_lang.php */
