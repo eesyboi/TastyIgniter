@@ -1,57 +1,212 @@
-function addToCart(food_id, quantity) {
-	//var obj = $(this).parent('tr').find('select[name=\'quantity\']')
-	//var qty = $(obj).val();
-	quantity = typeof(quantity) != 'undefined' ? quantity : 1;
+function addToCart(menu_id) {
+	
+	var menu_options = $('#' + menu_id).find('input:checked').val();
+	var quantity 	= $('#' + menu_id).find('select[name=\'quantity\']').val();
 
 	$.ajax({
-		url: 'http://localhost/TastyIgniter/cart/add',
+		url: js_site_url + 'module/cart_mod/add',
 		type: 'post',
-		data: 'food_id=' + food_id + '&quantity=' + quantity,
+		data: 'menu_id=' + menu_id + '&menu_options=' + menu_options + '&quantity=' + quantity,
 		dataType: 'json',
 		success: function(json) {
-			//$('.success, .warning, .attention, .information, .error').remove();
+			$('#notification p').remove();
+
+			if(json['redirect']) {
+				window.location.href = json['redirect'];
+			}
+					
+			if (json['error']) {
+				$('#cart-alert').html('<p class="error" style="display: none;">' + json['error'] + '</p>');
 			
-			if (json['redirect']) {
-				location = json['redirect'];
+				$('.error').fadeIn('slow');
+							
+				$('html, body').animate({ scrollTop: 0 }, 'slow'); 
+			}
+		
+			if (json['success']) {
+				$('#cart-alert').html('<p class="success" style="display: none;">' + json['success'] + '</p>');
+			
+				$('.success').fadeIn('slow');
+							
+				$('html, body').animate({ scrollTop: 0 }, 'slow'); 
+			}	
+
+			$('#cart-info').load(js_site_url + 'module/cart_mod #cart-info > *');
+		}
+	});
+}
+
+function updateCart(menu_id, row_id) {
+
+	var quantity = $('#' + row_id).find('select').val();
+
+	$.ajax({
+		url: js_site_url + 'module/cart_mod/update',
+		type: 'post',
+		data: 'menu_id' + menu_id + '&row_id=' + row_id + '&quantity=' + quantity,
+		dataType: 'json',
+		success: function(json) {
+
+			$('#cart-alert p').remove();
+
+			if(json['redirect']) {
+				window.location.href = json['redirect'];
+			}
+					
+			if (json['error']) {
+				$('#cart-alert').html('<p class="error" style="display: none;">' + json['error'] + '</p>');
+			
+				$('.error').fadeIn('slow');
+
+				$('html, body').animate({ scrollTop: 0 }, 'slow'); 
+			}
+		
+			if (json['success']) {
+				$('#cart-alert').html('<p class="success" style="display: none;">' + json['success'] + '</p>');
+			
+				$('.success').fadeIn('slow');
+			
+				$('html, body').animate({ scrollTop: 0 }, 'slow'); 
+			}	
+
+			$('#cart-info').load(js_site_url + 'module/cart_mod #cart-info > *');
+		}
+	});
+}
+
+function applyCoupon(code) {
+
+	var code = $('input[name=\'coupon\']').val();
+
+	$.ajax({
+		url: js_site_url + 'module/cart_mod/coupon',
+		type: 'post',
+		data: 'code=' + code,
+		dataType: 'json',
+		success: function(json) {
+			$('#cart-alert p').remove();
+
+			if(json['redirect']) {
+				window.location.href = json['redirect'];
+			}
+					
+			if (json['error']) {
+				$('#cart-alert').html('<p class="error">' + json['error'] + '</p>');
+			
+				$('.error').fadeIn('slow');
+
+				$('html, body').animate({ scrollTop: 0 }, 'slow'); 
+			}
+		
+			if (json['success']) {
+				$('#cart-alert').html('<p class="success">' + json['success'] + '</p>');
+			
+				$('.success').fadeIn('slow');
+			
+				$('html, body').animate({ scrollTop: 0 }, 'slow'); 
+			}	
+
+			$('#cart-info').load(js_site_url + 'module/cart_mod #cart-info > *');
+		}
+	});
+}
+
+function clearCoupon() {
+	$('input[name=\'coupon\']').attr('value', '');
+
+	$.ajax({
+		url: js_site_url + 'module/cart_mod/coupon',
+		//type: 'post',
+		//data: '',
+		dataType: 'json',
+		success: function(json) {
+			$('#cart-alert p').remove();
+			
+			if (json['error']) {
+				$('#cart-alert').html('<p class="error">' + json['error'] + '</p>');
+			
+				$('.success').fadeIn('slow');
+			
+				$('html, body').animate({ scrollTop: 0 }, 'slow'); 
+			}
+
+			$('#cart-info').load(js_site_url + 'module/cart_mod #cart-info > *');
+		}
+	});
+}
+
+function confirmOrder() {
+	document.getElementById("checkout-form").submit();
+	document.getElementById("delivery-form").submit();
+	document.getElementById("payment-form").submit();
+}
+
+function reserveTable() {
+	document.getElementById("reserve-form").submit();
+}
+
+function checkPostcode() {
+	document.getElementById("location-form").submit();
+}
+
+
+function addReview(formID) {
+
+	var menu_id = $(formID).find('input[name=\'menu_id\']').val();
+	var customer_id = $(formID).find('input[name=\'customer_id\']').val();
+	var customer_name = $(formID).find('input[name=\'customer_name\']').val();
+	var rating_id = $(formID).find('select[name=\'rating_id\']').val();
+	var review_text = $(formID).find('textarea[name=\'review_text\']').val();
+
+	$.ajax({
+		url: js_site_url + 'menus/review',
+		type: 'post',
+		data: 'menu_id=' + menu_id + '&customer_id=' + customer_id + '&customer_name=' + customer_name + '&rating_id=' + rating_id + '&review_text=' + review_text,
+		dataType: 'json',
+		success: function(json) {
+			//$(formID).remove('select');
+			//$('#review-notification .error, #review-notification .success').remove();
+
+
+			if (json['error']) {
+				$('#review-notification').html('<p class="error" style="display: none;">' + json['error'] + '</p>');
+			
+				$('.error').fadeIn('slow');
+			
+				$('html, body').animate({ scrollTop: 0 }, 'slow'); 
+
 			}
 			
 			if (json['success']) {
-				$('#notification').html('<div class="success" style="display: none;">' + json['success'] + '</div>');
-				
-				//$('.success').fadeIn('slow');
-				
-				//$('#cart-total').html(json['total']);
-				
-				//$('html, body').animate({ scrollTop: 0 }, 'slow'); 
+				$('#review-box').html('<p class="success">' + json['success'] + '</p>');
+			
+				$('#review-box').fadeIn(1000).delay(3000).fadeOut(1500, function() {
+					$('#opaclayer').hide().css('opacity','1');
+				});				
 			}	
 		}
 	});
 }
 
-//Remove Category in Admin
-function removeCategory(category_id) {
-
-	$.ajax({
-		url: 'http://localhost/TastyIgniter/admin/categories/remove',
-		type: 'post',
-		data: 'category_id=' + category_id,
-		dataType: 'json',
-		success: function(json) {
-		
-		}
-	});
+function openReviewBox(menu_id) {
+	$('#review-box').load(js_site_url + 'menus/write_review?menu_id=' + menu_id + ' #write-review > *');
+	var opaclayerHeight = $(document).height();
+	var opaclayerWidth = $(window).width();
+	$('#opaclayer').css('height', opaclayerHeight);
+	$('#opaclayer').css('width', opaclayerWidth);
+	var winH = $(window).height();
+	var winW = $(window).width();
+	$('#review-box').css('top',  winH/2-$('#review-box').height()/2);
+	$('#review-box').css('left', winW/2-$('#review-box').width()/2);				
+	$('#opaclayer').fadeTo(500,0.8);
+	$('#review-box').fadeIn(500);
 }
 
-//Remove Food in Admin
-function removeFood(food_id) {
-
-	$.ajax({
-		url: 'http://localhost/TastyIgniter/admin/foods/remove',
-		type: 'post',
-		data: 'food_id=' + food_id,
-		dataType: 'json',
-		success: function(json) {
-		
-		}
+function closeReviewBox() {
+	$('#opaclayer').fadeOut(500, function() {
+		$('#opaclayer').hide().css('opacity','1');
+	});
+	$('#review-box').fadeOut(500, function() {
+		$('#review-box').hide();
 	});
 }

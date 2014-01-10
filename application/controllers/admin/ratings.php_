@@ -1,0 +1,208 @@
+<?php
+class Ratings extends CI_Controller {
+
+	public function __construct() {
+		parent::__construct();
+		$this->load->library('user');
+		$this->load->model('Reviews_model');
+		$this->output->enable_profiler(TRUE); // for debugging profiler... remove later
+	}
+
+	public function index() {
+			
+		//check if file exists in views
+		if ( !file_exists('application/views/admin/ratings.php')) {
+			// Whoops, we don't have a page for that!
+			show_404();
+		}
+
+		if (!$this->user->islogged()) {  
+  			redirect('admin/login');
+		}
+
+    	if (!$this->user->hasPermissions('access', 'admin/ratings')) {
+  			redirect('admin/permission');
+		}
+		
+		if ($this->session->flashdata('alert')) {
+			$data['alert'] = $this->session->flashdata('alert');
+		} else {
+			$data['alert'] = '';
+		}
+
+		$data['heading'] = 'Ratings';
+		$data['sub_menu_list'] 	= '<li><a id="menu-add">Add new review</a></li>';
+		$data['text_empty'] = 'There are no ratings, please add!.';
+
+		//load ratings data into array
+		$data['ratings'] = array();
+		$results = $this->Reviews_model->getRatings();
+		foreach ($results as $result) {					
+			$data['ratings'][] = array(
+				'rating_id'		=>	$result['rating_id'],
+				'rating_name'	=>	$result['rating_name'],
+				'edit' 			=> $this->config->site_url('admin/ratings/edit/' . $result['rating_id'])
+			);
+		}
+
+		// check POST submit, validate fields and send rating data to model
+		if ($this->input->post() && $this->_addRating() === TRUE) {
+		
+			redirect('admin/ratings');  			
+		}
+
+		//check if POST submit then remove Ratings_id
+		if ($this->input->post('delete') && $this->_deleteRating() === TRUE) {
+			
+			redirect('admin/ratings');  			
+		}	
+
+		//load home page content
+		$this->load->view('admin/header', $data);
+		$this->load->view('admin/ratings', $data);
+		$this->load->view('admin/footer');
+	}
+	
+	public function edit() {
+		//check if file exists in views
+		if ( !file_exists('application/views/admin/ratings_edit.php')) {
+			// Whoops, we don't have a page for that!
+			show_404();
+		}
+		
+		if (!$this->user->islogged()) {  
+  			redirect('admin/login');
+		}
+
+    	if (!$this->user->hasPermissions('access', 'admin/ratings')) {
+  			redirect('admin/permission');
+		}
+		
+		if ($this->session->flashdata('alert')) {
+			$data['alert'] = $this->session->flashdata('alert');
+		} else { 
+			$data['alert'] = '';
+		}		
+		
+		//check if /rating_id is set in uri string
+		if (is_numeric($this->uri->segment(4))) {
+			$rating_id = $this->uri->segment(4);
+		} else {
+		    redirect('admin/ratings');
+		}
+		
+		$data['heading'] = 'Ratings';
+		$data['sub_menu_list'] 	= '<li><a href="'. site_url('admin/ratings') .'">All Ratings</a></li>';
+
+		$rating_info = $this->Reviews_model->getRating($rating_id);
+		$data['rating_id'] 		= $rating_info['rating_id'];
+		$data['rating_name'] 	= $rating_info['rating_name'];
+
+		//check if POST add_Ratings, validate fields and add Ratings to model
+		if ($this->input->post() && $this->_updateRating($rating_id) === TRUE){
+						
+			redirect('admin/ratings');
+		}
+						
+		//Remove Ratings
+		if ($this->input->post('delete') && $this->_deleteRating($rating_id) === TRUE) {
+					
+			redirect('admin/ratings');
+		}
+		
+		$this->load->view('admin/header', $data);
+		$this->load->view('admin/ratings_edit', $data);
+		$this->load->view('admin/footer');
+	}
+
+	public function _addRating() {
+									
+    	if (!$this->user->hasPermission('modify', 'admin/ratings')) {
+		
+			$this->session->set_flashdata('alert', '<p class="warning">Warning: You do not have permission to modify!</p>');
+			return TRUE;
+    	
+    	} else { 
+			
+			//validate category value
+			$this->form_validation->set_rules('rating_name', 'Rating Name', 'trim|required|min_length[2]|max_length[32]');
+
+			if ($this->form_validation->run() === TRUE) {
+				$add = array();
+			
+				$add['rating_name'] 	= $this->input->post('rating_name');
+	
+				if ($this->Reviews_model->addRating($add)) {	
+			
+					$this->session->set_flashdata('alert', '<p class="success">Rating Added Sucessfully!</p>');
+				} else {
+			
+					$this->session->set_flashdata('alert', '<p class="warning">Nothing Updated!</p>');				
+				}
+				
+				return TRUE;
+			}
+		}
+	}	
+
+	public function _updateRating($rating_id) {
+						
+    	if (!$this->user->hasPermission('modify', 'admin/ratings')) {
+		
+			$this->session->set_flashdata('alert', '<p class="warning">Warning: You do not have permission to modify!</p>');
+			return TRUE;
+    	
+    	} else if (!$this->input->post('delete')) { 
+			
+			$this->form_validation->set_rules('rating_name', 'Rating Name', 'trim|required|min_length[2]|max_length[32]');
+
+			if ($this->form_validation->run() === TRUE) {
+				$update = array();
+				
+				//Sanitizing the POST values
+				$update['rating_id'] 	= $rating_id;
+				$update['rating_name'] 	= $this->input->post('rating_name');
+
+				if ($this->Reviews_model->updateRating($update)) {						
+			
+					$this->session->set_flashdata('alert', '<p class="success">Rating Updated Sucessfully!</p>');
+				} else {
+			
+					$this->session->set_flashdata('alert', '<p class="warning">Nothing Updated!</p>');				
+				}
+			
+				return TRUE;
+			}
+		}
+	}
+
+	public function _deleteRating($rating_id = FALSE) {
+    	if (!$this->user->hasPermission('modify', 'admin/ratings')) {
+		
+			$this->session->set_flashdata('alert', '<p class="warning">Warning: You do not have permission to modify!</p>');
+    	
+    	} else { 
+		
+			if ($this->input->post('delete') === '1') {
+					
+				$this->Foods_model->deleteRating($rating_id);
+					
+				$this->session->set_flashdata('alert', '<p class="success">Rating Deleted Sucessfully!</p>');
+
+			} else if (is_array($this->input->post('delete'))) {
+
+				//sorting the post[quantity] array to rowid and qty.
+				foreach ($this->input->post('delete') as $key => $value) {
+					$rating_id = $key;
+				
+					$this->Reviews_model->deleteRating($rating_id);
+				}			
+			
+				$this->session->set_flashdata('alert', '<p class="success">Rating(s) Deleted Sucessfully!</p>');
+
+			}
+		}
+				
+		return TRUE;
+	}
+}

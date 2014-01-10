@@ -1,12 +1,10 @@
-<div class="content">
-<?php if (!empty($errmsg_arr)) { ?>
-	<p><?php echo $errmsg_arr; ?></p>
-<? } ?>
-<?php echo form_open('admin/login') ?>
+<div class="box">
+<h2 align="center">Please enter your login details.</h2>
+<?php echo form_open(current_url()) ?>
   <table width="300" border="0" align="center" cellpadding="2" cellspacing="0">
     <tr>
       <td width="112"><b>Username</b></td>
-      <td width="188"><input name="login" type="text" class="textfield" id="login" /></td>
+      <td width="188"><input name="user" type="text" class="textfield" id="user" /></td>
     </tr>
     <tr>
       <td><b>Password</b></td>
@@ -19,8 +17,3 @@
   </table>
 </form>
 </div>
- <!--Results <?php echo print_r($errmsg_arr) ?>
-  <br /><br /><br /><br /><br />
-     ((((((<?php echo print_r($login_data) ?> ////////   <?php echo print_r($password_data) ?> )))))))
-  <br /><br /><br /><br /><br />
-  Error <?php echo print_r($errmsg_arr) ?>-->

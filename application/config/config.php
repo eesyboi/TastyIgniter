@@ -16,6 +16,11 @@
 */
 $config['base_url']	= '';
 
+$config['modules_locations'] = array(
+APPPATH.'extensions/' => '../extensions/'
+);
+
+
 /*
 |--------------------------------------------------------------------------
 | Index File
@@ -106,7 +111,7 @@ $config['enable_hooks'] = FALSE;
 | http://codeigniter.com/user_guide/general/creating_libraries.html
 |
 */
-$config['subclass_prefix'] = 'MY_';
+$config['subclass_prefix'] = 'TI_';
 
 
 /*
@@ -126,7 +131,7 @@ $config['subclass_prefix'] = 'MY_';
 | DO NOT CHANGE THIS UNLESS YOU FULLY UNDERSTAND THE REPERCUSSIONS!!
 |
 */
-$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-';
+$config['permitted_uri_chars'] = 'a-z 0-9~%.:_\-=&';
 
 
 /*
@@ -180,7 +185,7 @@ $config['directory_trigger']	= 'd'; // experimental not currently in use
 | your log files will fill up very fast.
 |
 */
-$config['log_threshold'] = 2;
+$config['log_threshold'] = 1;
 
 /*
 |--------------------------------------------------------------------------
@@ -244,7 +249,7 @@ $config['encryption_key'] = 'muh6T37619LO09uJpk1679pCI06LHps4';
 | 'sess_time_to_update'		= how many seconds between CI refreshing Session Information
 |
 */
-$config['sess_cookie_name']		= 'ci_session';
+$config['sess_cookie_name']		= 'tastysession';
 $config['sess_expiration']		= 0;
 $config['sess_expire_on_close']	= FALSE;
 $config['sess_encrypt_cookie']	= FALSE;
@@ -279,7 +284,7 @@ $config['cookie_secure']	= FALSE;
 | COOKIE data is encountered
 |
 */
-$config['global_xss_filtering'] = FALSE;
+$config['global_xss_filtering'] = TRUE;
 
 /*
 |--------------------------------------------------------------------------
@@ -356,20 +361,6 @@ $config['rewrite_short_tags'] = FALSE;
 |
 */
 $config['proxy_ips'] = '';
-
-/*
-|--------------------------------------------------------------------------
-| Setting Upload Preferences
-|--------------------------------------------------------------------------
-|
-|
-*/
-//$config['upload_path'] = 'http://localhost/TastyIgniter/assets/img/';
-//$config['allowed_types'] = 'gif|jpg|png';
-//$config['max_size'] = '300';
-//$config['max_width'] = '2024';
-//$config['max_height'] = '1468';
-
 
 /* End of file config.php */
 /* Location: ./application/config/config.php */

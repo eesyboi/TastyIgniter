@@ -31,10 +31,10 @@ class CI_Pagination {
 	var $suffix				= ''; // A custom suffix added to the path.
 
 	var $total_rows			=  0; // Total number of items (database results)
-	var $per_page			= 10; // Max number of items you want shown per page
+	var $per_page			= 20; // Max number of items you want shown per page
 	var $num_links			=  2; // Number of "digit" links to show before/after the currently viewed page
-	var $cur_page			=  0; // The current page being viewed
-	var $use_page_numbers	= FALSE; // Use page number for segment instead of offset
+	var $cur_page			=  1; // The current page being viewed
+	var $use_page_numbers	= TRUE; // Use page number for segment instead of offset
 	var $first_link			= '&lsaquo; First';
 	var $next_link			= '&gt;';
 	var $prev_link			= '&lt;';
@@ -55,8 +55,8 @@ class CI_Pagination {
 	var $prev_tag_close		= '';
 	var $num_tag_open		= '&nbsp;';
 	var $num_tag_close		= '';
-	var $page_query_string	= FALSE;
-	var $query_string_segment = 'per_page';
+	var $page_query_string	= TRUE;
+	var $query_string_segment = 'page';
 	var $display_pages		= TRUE;
 	var $anchor_class		= '';
 
@@ -214,7 +214,7 @@ class CI_Pagination {
 		// string. If post, add a trailing slash to the base URL if needed
 		if ($CI->config->item('enable_query_strings') === TRUE OR $this->page_query_string === TRUE)
 		{
-			$this->base_url = rtrim($this->base_url).'&amp;'.$this->query_string_segment.'=';
+			$this->base_url = rtrim($this->base_url).'&#63;'.$this->query_string_segment.'=';
 		}
 		else
 		{

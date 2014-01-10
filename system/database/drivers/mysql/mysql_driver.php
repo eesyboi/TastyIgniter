@@ -44,7 +44,7 @@ class CI_DB_mysql_driver extends CI_DB {
 	 * of affected rows to be shown. Uses a preg_replace when enabled,
 	 * adding a bit more processing to all queries.
 	 */
-	var $delete_hack = TRUE;
+	var $delete_hack = FALSE;
 
 	/**
 	 * The syntax to count rows is slightly different across different
@@ -591,8 +591,30 @@ class CI_DB_mysql_driver extends CI_DB {
 
 	// --------------------------------------------------------------------
 
-
 	/**
+	* Insert_on_duplicate_update_batch statement
+	*
+	* Generates a platform-specific insert string from the supplied data
+	* MODIFIED to include ON DUPLICATE UPDATE
+	*
+	* @access public
+	* @param string the table name
+	* @param array the insert keys
+	* @param array the insert values
+	* @return string
+	*/
+	function _insert_on_duplicate_update_batch($table, $keys, $values)
+	{
+		foreach($keys as $num => $key) {
+			$update_fields[] = $key .'='. $values[$num];
+		}
+ 
+		return "INSERT INTO ".$table." (".implode(', ', $keys).") VALUES (".implode(', ', $values).") ON DUPLICATE KEY UPDATE ".implode(', ', $update_fields);
+	}
+
+	// --------------------------------------------------------------------
+
+ 	/**
 	 * Update statement
 	 *
 	 * Generates a platform-specific update string from the supplied data

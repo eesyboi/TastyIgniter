@@ -28,7 +28,7 @@ class CI_Cart {
 
 	// These are the regular expression rules that we use to validate the product ID and product name
 	var $product_id_rules	= '\.a-z0-9_-'; // alpha-numeric, dashes, underscores, or periods
-	var $product_name_rules	= '\.\:\-_ a-z0-9'; // alpha-numeric, dashes, underscores, colons or periods
+	var $product_name_rules	= '\()\/\.\:\-_ a-z0-9'; // alpha-numeric, dashes, underscores, colons or periods
 
 	// Private variables.  Do not change!
 	var $CI;
@@ -68,6 +68,9 @@ class CI_Cart {
 			// No cart exists so we'll set some base values
 			$this->_cart_contents['cart_total'] = 0;
 			$this->_cart_contents['total_items'] = 0;
+			$this->_cart_contents['order_total'] = 0;
+			$this->_cart_contents['delivery'] = 0;
+			$this->_cart_contents['discount'] = 0;
 		}
 
 		log_message('debug', "Cart Class Initialized");
@@ -361,6 +364,96 @@ class CI_Cart {
 	// --------------------------------------------------------------------
 
 	/**
+	 * Set Delivery Charge *** TASTYIGNITER
+	 *
+	 * This function permits calculates the delivery charge.
+	 *
+	 * @access	private
+	 * @return	bool
+	 */
+	function setDelivery($charge = 0)
+	{
+		if ( ! is_numeric($charge) OR $charge <= 0) 
+		{
+			$save_cart = FALSE;
+		}
+		
+		if ($charge > 0) 
+		{
+			$this->_cart_contents['delivery'] = $charge;
+			$save_cart = TRUE;
+		} 
+		else
+		{
+			$this->_cart_contents['delivery'] = 0;
+			$save_cart = TRUE;
+		} 
+		
+		if ($save_cart === TRUE) 
+		{
+			$this->_save_cart();
+			return TRUE;
+		}
+		
+		return FALSE;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Set Coupon *** TASTYIGNITER
+	 *
+	 * This function permits calculates the coupon discount from code.
+	 *
+	 * @access	private
+	 * @return	bool
+	 */
+	function setCoupon($type = '', $amount = 0)
+	{
+
+		if ( ! is_numeric($amount) && $amount < 0) 
+		{
+			$save_cart = FALSE;
+		}
+
+		$discount = 0;
+		
+		if ($type === 'P' && $amount > 0) 
+		{
+			$discount = $amount / 100 * $this->_cart_contents['cart_total'];
+		}
+		 else if ($type === 'F' && $amount > 0) 
+		{
+			$discount = $amount;
+		}
+		else
+		{
+			$save_cart = FALSE;		
+		}
+
+		if ($discount > 0) 
+		{
+			$this->_cart_contents['discount'] = $discount;
+			$save_cart = TRUE;
+		}
+		else
+		{
+			$this->_cart_contents['discount'] = 0;
+			$save_cart = TRUE;
+		}
+
+		if ($save_cart === TRUE) 
+		{
+			$this->_save_cart();
+			return TRUE;
+		}
+		
+		return FALSE;
+	}
+
+	// --------------------------------------------------------------------
+	
+	/**
 	 * Save the cart array to the session DB
 	 *
 	 * @access	private
@@ -371,6 +464,7 @@ class CI_Cart {
 		// Unset these so our total can be calculated correctly below
 		unset($this->_cart_contents['total_items']);
 		unset($this->_cart_contents['cart_total']);
+		unset($this->_cart_contents['order_total']);
 
 		// Lets add up the individual prices and set the cart sub-total
 		$total = 0;
@@ -394,8 +488,13 @@ class CI_Cart {
 		$this->_cart_contents['total_items'] = $items;
 		$this->_cart_contents['cart_total'] = $total;
 
+		$total = (isset($this->_cart_contents['discount'])) ? $total - $this->_cart_contents['discount'] : $total;
+		$total = (isset($this->_cart_contents['delivery'])) ? $total + $this->_cart_contents['delivery'] : $total;
+		
+		$this->_cart_contents['order_total'] = $total;
+				
 		// Is our cart empty?  If so we delete it from the session
-		if (count($this->_cart_contents) <= 2)
+		if (count($this->_cart_contents) <= 5)
 		{
 			$this->CI->session->unset_userdata('cart_contents');
 
@@ -427,6 +526,19 @@ class CI_Cart {
 	// --------------------------------------------------------------------
 
 	/**
+	 * Order Total *** TASTYIGNITER
+	 *
+	 * @access	public
+	 * @return	integer
+	 */
+	function order_total()
+	{
+		return $this->_cart_contents['order_total'];
+	}
+	
+	// --------------------------------------------------------------------
+
+	/**
 	 * Total Items
 	 *
 	 * Returns the total item count
@@ -437,6 +549,36 @@ class CI_Cart {
 	function total_items()
 	{
 		return $this->_cart_contents['total_items'];
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Delivery Charge *** TASTYIGNITER
+	 *
+	 * Returns the delivery charge amount
+	 *
+	 * @access	public
+	 * @return	integer
+	 */
+	function delivery()
+	{
+		return $this->_cart_contents['delivery'];
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Coupon Discount Amount *** TASTYIGNITER
+	 *
+	 * Returns coupon discount amount
+	 *
+	 * @access	public
+	 * @return	integer
+	 */
+	function discount()
+	{
+		return $this->_cart_contents['discount'];
 	}
 
 	// --------------------------------------------------------------------
@@ -456,6 +598,9 @@ class CI_Cart {
 		// Remove these so they don't create a problem when showing the cart table
 		unset($cart['total_items']);
 		unset($cart['cart_total']);
+		unset($cart['order_total']);
+		unset($cart['discount']);
+		unset($cart['delivery']);
 
 		return $cart;
 	}
@@ -540,10 +685,18 @@ class CI_Cart {
 
 		$this->_cart_contents['cart_total'] = 0;
 		$this->_cart_contents['total_items'] = 0;
+		$this->_cart_contents['order_total'] = 0;
+		$this->_cart_contents['delivery'] = 0;
+		$this->_cart_contents['discount'] = 0;
 
 		$this->CI->session->unset_userdata('cart_contents');
+		$this->CI->session->unset_userdata('coupon');
 	}
 
+	function clearCoupon() {
+		$this->_cart_contents['discount'] = 0;
+		return TRUE;
+	}
 
 }
 // END Cart Class

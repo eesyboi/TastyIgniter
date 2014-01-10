@@ -5,62 +5,115 @@ class Dashboard_model extends CI_Model {
 		$this->load->database();
 	}
 
-	public function getSummaries($flag = 1) {
+	public function getTotalCustomers() {
 
-		$summaries = array();
-		$members_query = $this->db->query("SELECT * FROM customers");
-		$foods_query = $this->db->query("SELECT * FROM foods");
-		$orders_query = $this->db->query("SELECT * FROM orders_details");
-		$orders_processed_query = $this->db->query("SELECT * FROM orders_details WHERE flag = '$flag'");
-		$tables_reserved_query = $this->db->query("SELECT * FROM reservations_details WHERE table_flag = '$flag'");
-		$tables_allocated_query = $this->db->query("SELECT * FROM reservations_details WHERE flag = '$flag' AND table_flag = '$flag'");
-		$partyhalls_reserved_query = $this->db->query("SELECT * FROM reservations_details WHERE partyhall_flag = '$flag'");
-		$partyhalls_allocated_query = $this->db->query("SELECT * FROM reservations_details WHERE flag = '$flag' AND partyhall_flag = '$flag'");
-
-		$summaries[] = array(
-			'foods_query'	=>	$foods_query,
-			'members_query'	=>	$members_query,
-			'orders_query'	=>	$orders_query,		
-			'orders_processed_query'	=>	$orders_processed_query,	
-			'tables_reserved_query'	=>	$tables_reserved_query,		
-			'tables_allocated_query'	=>	$tables_allocated_query,	
-			'partyhalls_reserved_query'	=>	$partyhalls_reserved_query,	
-			'partyhalls_allocated_query'	=>	$partyhalls_allocated_query		
-		);
-		
-		return $summaries;
+		return $this->db->count_all('customers');
 	}
 
-	public function getRatings($food_id) {
-		$query = $this->db->query("SELECT * FROM foods, polls_details WHERE polls_details.food_id = '$food_id' AND foods.food_id = '$food_id'");
-	
-        $ratings_query = $this->db->query("SELECT * FROM ratings");
-        if ($ratings_query->num_rows() > 0) {
-        	$excellent = $ratings_query->row(0);
-        	$good = $ratings_query->row(1);
-        	$average = $ratings_query->row(2);
-        	$bad = $ratings_query->row(3);
-        	$worse = $ratings_query->row(4);
+	public function getTotalMenus() {
 
-        	$excellent_qry = $this->db->query("SELECT * FROM foods, polls_details WHERE polls_details.food_id = '$food_id' AND foods.food_id='$food_id' AND polls_details.rate_id='$excellent->rate_id'");
-	        $good_qry = $this->db->query("SELECT * FROM foods, polls_details WHERE polls_details.food_id = '$food_id' AND foods.food_id = '$food_id' AND polls_details.rate_id = '$good->rate_id'");
-        	$average_qry = $this->db->query("SELECT * FROM foods, polls_details WHERE polls_details.food_id = '$food_id' AND foods.food_id = '$food_id' AND polls_details.rate_id = '$average->rate_id'");
-        	$bad_qry=$this->db->query("SELECT * FROM foods, polls_details WHERE polls_details.food_id = '$food_id' AND foods.food_id = '$food_id' AND polls_details.rate_id = '$bad->rate_id'");
-        	$worse_qry=$this->db->query("SELECT * FROM foods, polls_details WHERE polls_details.food_id = '$food_id' AND foods.food_id = '$food_id' AND polls_details.rate_id = '$worse->rate_id'");
-
-        }
-
-		$get_ratings[] = array(
-			'ratings'	=>	$query,
-			'excellent_query'	=>	$excellent_qry,
-			'good_query'	=>	$good_qry,		
-			'average_query'	=>	$average_qry,		
-			'bad_query'	=>	$bad_qry,		
-			'worse_query'	=>	$worse_qry		
-		);
-		
-		return $get_ratings;
+		return $this->db->count_all('menus');
 	}
 
+	public function getTotalSales() {
 
+		$this->db->select_sum('order_total', 'total_sales');
+		$this->db->where('status_id >', '0');
+		$query = $this->db->get('orders');
+		
+		if ($query->num_rows() > 0) {
+			$row = $query->row_array();
+			return $row['total_sales'];
+		}
+	}
+
+	public function getTotalSalesByYear() {
+		$year = date('Y');
+		
+		$this->db->select_sum('order_total', 'total_sales_by_year');
+		$this->db->where('status_id >', '0');
+		$this->db->where('YEAR(date_added)', $year);
+		$query = $this->db->get('orders');
+		
+		if ($query->num_rows() > 0) {
+			$row = $query->row_array();
+			return $row['total_sales_by_year'];
+		}
+	}
+
+	public function getTotalOrdersReceived() {
+
+		$this->db->where('status_id', $this->config->item('config_order_received'));
+		$this->db->from('orders');
+		
+		return $this->db->count_all_results();
+	}
+
+	public function getTotalOrdersCompleted() {
+
+		$this->db->where('status_id', $this->config->item('config_order_completed'));
+		$this->db->from('orders');
+		
+		return $this->db->count_all_results();
+	}
+
+	public function getTotalOrdersDelivered() {
+
+		$this->db->where('order_type', '1');
+		$this->db->from('orders');
+		
+		return $this->db->count_all_results();
+	}
+
+	public function getTotalOrdersPickedUp() {
+
+		$this->db->where('order_type', '2');
+		$this->db->from('orders');
+		
+		return $this->db->count_all_results();
+	}
+
+	public function getTotalTables() {
+
+		return $this->db->count_all('tables');
+	}
+
+	public function getTotalTablesReserved() {
+
+		$this->db->where('status', $this->config->item('config_reserve_status'));
+		$this->db->from('reservations');
+		
+		return $this->db->count_all_results();
+	}
+
+	public function getTotalMenuReviews($menu_id) {
+		
+  		$rating_data = array();
+
+		$this->db->where('menu_id', $menu_id);
+		$this->db->from('reviews');
+		
+		$total_reviews = $this->db->count_all_results();
+
+		if ($total_reviews > 0) {
+
+			$ratings = array('1' => 'Bad', '2' => 'Worse', '3' => 'Good', '4' => 'Average', '5' => 'Excellent');
+			
+			foreach ($ratings as $key => $rating) {
+				
+				$rating_id = $key;
+				$this->db->where('menu_id', $menu_id);
+				$this->db->where('rating_id', $rating_id);
+				$this->db->from('reviews');
+				
+				$total_ratings = $this->db->count_all_results();
+
+        		$rating_data['total'][$rating_id] = $total_ratings;
+        		$rating_data['percent'][$rating_id] = ($total_ratings/$total_reviews)*100;
+			
+			}
+		}
+		
+		return $rating_data;
+	}
 }

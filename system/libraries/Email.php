@@ -43,7 +43,7 @@ class CI_Email {
 	var	$charset		= "utf-8";	// Default char set: iso-8859-1 or us-ascii
 	var	$multipart		= "mixed";	// "mixed" (in the body) or "related" (separate)
 	var $alt_message	= '';		// Alternative message for HTML emails
-	var	$validate		= FALSE;	// TRUE/FALSE.  Enables email validation
+	var	$validate		= TRUE;	// TRUE/FALSE.  Enables email validation
 	var	$priority		= "3";		// Default priority (1 - 5)
 	var	$newline		= "\n";		// Default newline. "\r\n" or "\n" (Use "\r\n" to comply with RFC 822)
 	var $crlf			= "\n";		// The RFC 2045 compliant CRLF for quoted-printable is "\r\n".  Apparently some servers,
@@ -109,6 +109,7 @@ class CI_Email {
 	 */
 	public function initialize($config = array())
 	{
+
 		foreach ($config as $key => $val)
 		{
 			if (isset($this->$key))
@@ -597,6 +598,90 @@ class CI_Email {
 	{
 		$this->_alt_boundary = "B_ALT_".uniqid(''); // multipart/alternative
 		$this->_atc_boundary = "B_ATC_".uniqid(''); // attachment boundary
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Set SMTP Host
+	 *
+	 * @access	public
+	 * @return	void
+	 */
+	public function set_smtp_host($c_smtp_host)
+	{
+		if (!isset($c_smtp_host))
+		{
+			$this->smtp_host	= '';
+			return;
+		}
+
+		$this->smtp_host	= $c_smtp_host;
+
+		return $this;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Set SMTP Port
+	 *
+	 * @access	public
+	 * @return	void
+	 */
+	public function set_smtp_port($c_smtp_port)
+	{
+		if (!isset($c_smtp_port))
+		{
+			$this->smtp_port	= '';
+			return;
+		}
+
+		$this->smtp_port	= $c_smtp_port;
+
+		return $this;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Set SMTP Username
+	 *
+	 * @access	public
+	 * @return	void
+	 */
+	public function set_smtp_user($c_smtp_user)
+	{
+		if (!isset($c_smtp_user))
+		{
+			$this->smtp_user	= '';
+			return;
+		}
+
+		$this->smtp_user	= $c_smtp_user;
+
+		return $this;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Set SMTP Password
+	 *
+	 * @access	public
+	 * @return	void
+	 */
+	public function set_smtp_pass($c_smtp_pass)
+	{
+		if (!isset($c_smtp_pass))
+		{
+			$this->smtp_pass	= '';
+			return;
+		}
+
+		$this->smtp_pass	= $c_smtp_pass;
+
+		return $this;
 	}
 
 	// --------------------------------------------------------------------

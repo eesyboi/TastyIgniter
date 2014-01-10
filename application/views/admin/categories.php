@@ -1,70 +1,50 @@
-<div id="content">
-	<?php echo $error; ?>
-	<table>
-	<CAPTION><h3>ADD NEW CATEGORY</h3></CAPTION>
-	<?php echo form_open('admin/categories') ?>
+<div class="box">
+	<div id="add-box" style="display:none">
+	<h2>ADD NEW CATEGORY</h2>
+	<form accept-charset="utf-8" method="post" action="<?php echo current_url(); ?>" id="addForm">
+	<table class="form">
 		<tr>
-    		<td>Name:</td>
-    		<td><input type="text" name="category_name" class="textfield" /></td>
-    	</tr>
-    	<?php if ($category_options) { ?>
-		<tr>
-    		<td>Food Option:</td>
-    		<td><select name="option_name">
-				<option value="">None</option>
-    		<?php foreach ($category_options as $category_option) { ?>
-    			<option value="<?php echo $category_option['option_name']; ?>"><?php echo $category_option['option_name']; ?></option>
-    		<?php } ?>
-    		</select></td>
-    	</tr>
-    	<?php } ?>
-    	<tr>
-   			<td colspan="2" align="right"><input type="submit" name="category" value="Add" /></td>
+			<td><b>Name:</b></td>
+			<td><input type="text" name="category_name" value="<?php echo set_value('category_name'); ?>" class="textfield" /></td>
 		</tr>
-	</form>
+		<tr>
+			<td><b>Description:</b></td>
+			<td><textarea name="category_description" rows="7" cols="50"><?php echo set_value('category_description'); ?></textarea></td>
+		</tr>
 	</table>
-	<hr>
-	<!--<div style="float:right"">
-	<table>
-	<?php echo form_open('admin/categories') ?>
-	<CAPTION><h3>ADD NEW CATEGORY OPTIONS</h3></CAPTION>
-		<tr>
-    		<td>Option Name:</td>
-    		<td><input type="text" name="option_name" class="textfield" /></td>
-    		<td>Option Value:</td>
-    		<td><input type="text" name="option_value" class="textfield" /></td>
-    		<td>Option Price:</td>
-    		<td><input type="text" name="option_price" class="textfield" /></td>
-    	</tr>
-    	<tr>
-   			<td><input type="submit" name="category_option" value="Add" /></td>
-		</tr>
 	</form>
-	</table>
-	</div>-->
-  	<hr>
-	<table width="480" align="center">
-	<CAPTION><h3>AVAILABLE CATEGORIES</h3></CAPTION>
+	</div>
+
+	<div id="list-box" class="content">
+	<form accept-charset="utf-8" method="post" action="<?php echo current_url(); ?>" id="listForm">
+	<table align="center" class="list">
 		<tr>
-			<th>Category ID</th>
-			<th>Category Name</th>
-			<th>Option Name</th>			
-			<th>Action(s)</th>			
+			<th width="1" style="text-align:center;"><input type="checkbox" onclick="$('input[name*=\'delete\']').prop('checked', this.checked);"></th>
+			<th>Name</th>
+			<th>Description</th>
+			<th class="right">Action</th>			
 		</tr>
+		<?php if ($categories) { ?>
 		<?php foreach ($categories as $category) { ?>
-  		<tr>
-  			<td><?php echo $category['category_id']; ?></td>
-  			<td><?php echo $category['category_name']; ?></td>
-  			<td><?php echo $category['option_name']; ?></td>
-  			<td><input type="radio" onclick="removeCategory('<?php echo $category['category_id']; ?>');" /> REMOVE |  
-  				<a>EDIT</a>
-  			</td>
-  		</tr>
+		<tr>
+			<td class="delete"><input type="checkbox" name="delete[]" value="<?php echo $category['category_id']; ?>" /></td>  
+			<td><?php echo $category['category_name']; ?></td>
+			<td><?php echo $category['category_description']; ?></td>
+			<td class="right">(<a class="edit" href="<?php echo $category['edit']; ?>">Edit</a>)</td>
+		</tr>
 
 		<?php } ?>
+		<?php } else { ?>
 		<tr>
-			<td colspan="4" align="right"><a href="<?php echo base_url('admin/categories'); ?>">REFRESH PAGE</a></td>
+			<td colspan="8">There are no categories added to your database.</td>
 		</tr>
+		<?php } ?>
 	</table>
-	<hr>
+	</form>
+
+	<div class="pagination">
+		<div class="links"><?php echo $pagination['links']; ?></div>
+		<div class="info"><?php echo $pagination['info']; ?></div> 
+	</div>
+	</div>
 </div>

@@ -38,7 +38,7 @@ class CI_Upload {
 	public $file_size				= "";
 	public $file_ext				= "";
 	public $upload_path				= "";
-	public $overwrite				= FALSE;
+	public $overwrite				= TRUE;
 	public $encrypt_name			= FALSE;
 	public $is_image				= FALSE;
 	public $image_width				= '';
@@ -496,6 +496,32 @@ class CI_Upload {
 	// --------------------------------------------------------------------
 
 	/**
+	 * Set Overwrite Existing File
+	 *
+	 * @param	string
+	 * @return	void
+	 */
+	public function set_overwrite($value)
+	{
+		$this->overwrite = (bool) $value;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
+	 * Set Remove Spaces From Filename
+	 *
+	 * @param	string
+	 * @return	void
+	 */
+	public function set_remove_spaces($value)
+	{
+		$this->remove_spaces = (bool) $value;
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * Set Image Properties
 	 *
 	 * Uses GD to determine the width/height/type of image
@@ -922,12 +948,12 @@ class CI_Upload {
 	 * @param	string
 	 * @return	string
 	 */
-	public function display_errors($open = '<p>', $close = '</p>')
+	public function display_errors()
 	{
 		$str = '';
 		foreach ($this->error_msg as $val)
 		{
-			$str .= $open.$val.$close;
+			$str .= $val;
 		}
 
 		return $str;

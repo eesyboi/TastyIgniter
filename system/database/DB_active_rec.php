@@ -1094,6 +1094,55 @@ class CI_DB_active_record extends CI_DB_driver {
 	// --------------------------------------------------------------------
 
 	/**
+	  * Insert_On_Duplicate_Update_Batch
+	  *
+	  * Compiles batch insert strings and runs the queries
+	  * MODIFIED to do a MySQL 'ON DUPLICATE KEY UPDATE'
+	  *
+	  * @access public
+	  * @param string the table to retrieve the results from
+	  * @param array an associative array of insert values
+	  * @return object
+	  */
+	function insert_on_duplicate_update_batch($table = '', $set = NULL)
+	{
+		if ( ! is_null($set))
+		{
+			$this->set($set);
+		}
+ 
+		if (count($this->ar_set) == 0)
+		{
+			if ($this->db_debug)
+			{
+				return $this->display_error('db_must_use_set');
+			}
+			return FALSE;
+		}
+ 
+		if ($table == '')
+		{
+			if ( ! isset($this->ar_from[0]))
+			{
+				if ($this->db_debug)
+				{
+					return $this->display_error('db_must_set_table');
+				}
+				return FALSE;
+			}
+ 
+			$table = $this->ar_from[0];
+		}
+ 
+		$sql = $this->_insert_on_duplicate_update_batch($this->_protect_identifiers($table, TRUE, NULL, FALSE), array_keys($this->ar_set), array_values($this->ar_set));
+ 
+		$this->_reset_write();
+		return $this->query($sql);
+	}
+
+	// --------------------------------------------------------------------
+
+	/**
 	 * The "set_insert_batch" function.  Allows key/value pairs to be set for batch inserts
 	 *
 	 * @param	mixed
@@ -1197,8 +1246,8 @@ class CI_DB_active_record extends CI_DB_driver {
 	}
 
 	// --------------------------------------------------------------------
-
-	/**
+ 
+ 	/**
 	 * Replace
 	 *
 	 * Compiles an replace into string and runs the query

@@ -1,33 +1,40 @@
 <div class="content">
- 	<h2>Almost there, Please login or register.</h2>
-    <p><?php echo validation_errors('<span class="error">', '</span>'); ?></p>
-	<?php echo form_open('checkout/login') ?>
-    <h3>Login (if existing customer)</h3>
-	<?php if (!empty($errmsg)) { ?>
-		<p><?php echo $errmsg; ?></p>
-	<?php } ?>
+ <h2><?php echo $text_login_register; ?></h2>
+
+<div class="wrap left">
+	<form method="post" accept-charset="utf-8" action="<?php echo current_url(); ?>">
+    <h3><?php echo $text_login; ?></h3>
     <table border="0" cellpadding="2" width="400px" align="center">
         <tr>
-            <td align="right"><b>Email</b></td>
-            <td><input name="email" type="text" class="textfield" id="email" /></td>
+            <td align="right"><b><?php echo $entry_email; ?></b></td>
+            <td><input name="email" type="text" class="textfield" id="email" /><br />
+    			<?php echo form_error('email', '<span class="error">', '</span>'); ?>
+    		</td>
     	</tr>
         <tr>
-            <td align="right"><b>Password</b></td>
-            <td><input name="password" type="password" class="textfield" id="password" /></td>
-        </tr>
-        <tr>
-            <td align="right"><input name="remember" type="checkbox" class="" id="remember" value="1" /></td>
-            <td>Remember me</td>
+            <td align="right"><b><?php echo $entry_password; ?></b></td>
+            <td><input name="password" type="password" class="textfield" id="password" /><br />
+    			<?php echo form_error('password', '<span class="error">', '</span>'); ?>
+    		</td>
         </tr>
         <tr>
             <td align="right"></td>
-            <td><a href="">Forgot password?</a></td>
+            <td><a href="<?php echo site_url('account/password/reset'); ?>"><?php echo $text_forgot; ?></a></td>
         </tr>
         <tr>
-        	<td colspan="2" align="center"><input type="submit" name="submit" value="Login" /></td>
+        	<td colspan="2" align="center"><input type="submit" name="submit" value="<?php echo $button_login; ?>" /></td>
         </tr>
     </table>
     </form>
- 	<hr>
-    <p><a href="<?php echo site_url('checkout/register'); ?>">Register (if new customer)</a></p>
 </div>
+
+<div id="register" class="wrap right">
+</div>
+
+
+</div>
+<script type="text/javascript"><!--
+$(document).ready(function() {
+	$('#register').load('<?php echo site_url("account/register"); ?> .wrap > *');
+});
+//--></script> 

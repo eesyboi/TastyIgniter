@@ -9,7 +9,7 @@
 ::webkit-selection{ background-color: #E13300; color: white; }
 
 body {
-	background-color: #fff;
+	background-color: #B87A00;
 	margin: 40px;
 	font: 13px/20px normal Helvetica, Arial, sans-serif;
 	color: #4F5155;
@@ -43,6 +43,7 @@ code {
 }
 
 #container {
+	background-color: #FFEFD1;
 	margin: 10px;
 	border: 1px solid #D0D0D0;
 	-webkit-box-shadow: 0 0 8px #D0D0D0;

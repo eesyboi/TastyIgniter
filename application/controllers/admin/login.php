@@ -1,33 +1,40 @@
 <?php
-class Login extends CI_Controller {
+class Login extends MX_Controller {
 
 	public function __construct() {
-		parent::__construct();
-		$this->load->library('admin');
+		parent::__construct(); //  calls the constructor
+		$this->load->library('user');
 		//$this->load->model('Admin_model');
 		$this->output->enable_profiler(TRUE); // for debugging profiler... remove later
 	}
 
 	public function index() {
-		//check if file exists in views
-		if ( !file_exists('application/views/admin/login.php')) {
-			// Whoops, we don't have a page for that!
-			show_404();
+		
+		if ( !file_exists('application/views/admin/login.php')) { //check if file exists in views folder
+			show_404(); // Whoops, show 404 error page!
 		}
 
-		$data['title'] = 'Adminstrator Login'; 
+		if ($this->session->flashdata('alert')) {
+			$data['alert'] = $this->session->flashdata('alert');  // retrieve session flashdata variable if available
+		} else {
+			$data['alert'] = '';
+		}
+
+		$data['heading'] = 'Adminstrator Login'; 
 		
-		if ($this->admin->islogged()) {  
+		if ($this->user->islogged()) {  
   			redirect('admin/dashboard');
 		}
-		if (($this->input->post('login')) || ($this->input->post('password'))) {
-			$login = $this->input->post('login');
+
+		if (($this->input->post('user')) || ($this->input->post('password'))) {
+			$user = $this->input->post('user');
 			$password = $this->input->post('password');
 			
-			if (!$this->admin->login($login, $password)) {
-				$data['errmsg_arr'] = 'Username and Password not found';
-    		//} else {
-  				//redirect('admin/dashboard');
+			if (!$this->user->login($user, $password)) {
+				$this->session->set_flashdata('alert', '<p class="error">Permission Denied!</p>');
+  				redirect('admin/login');
+    		} else {
+  				redirect('admin/dashboard');
   			}
     	}
 		

@@ -1,68 +1,123 @@
-<div class="content">
-	<table width="1000" align="center" style="text-align:center">
-		<CAPTION><h3>CURRENT STATUS</h3></CAPTION>
-		<thead>
-    		<th>Members Registered</th>
-   			<th>Orders Placed</th>
-    		<th>Orders Processed</th>
-    		<th>Orders Pending</th>  
-    		<th>Table(s) Reserved</th>
-    		<th>Table(s) Allocated</th>
-    		<th>Table(s) Pending</th>
-    		<th>PartyHall(s) Reserved</th>
-    		<th>PartyHall(s) Allocated</th>
-    		<th>PartyHall(s) Pending</th>    
-        </thead>
-		<tbody>
-		<tr>
-			<td><?php echo $total_members; ?></td>
-			<td><?php echo $total_orders; ?></td>
-			<td><?php echo $total_orders_processed; ?></td>
-			<td><?php echo $total_orders_pending; ?></td>
-			<td><?php echo $total_tables_reserved; ?></td>
-			<td><?php echo $total_tables_allocated; ?></td>
-			<td><?php echo $total_tables_pending; ?></td>
-			<td><?php echo $total_partyhalls_reserved; ?></td>
-			<td><?php echo $total_partyhalls_allocated; ?></td>
-			<td><?php echo $total_partyhalls_pending; ?></td>
-		</tr>
-		</tbody>
-	</table>
-<hr>
-	<?php echo form_open('admin/dashboard') ?>
-    <table width="360" align="center">
-    <CAPTION><h3>CUSTOMERS' RATINGS (100%)</h3></CAPTION>
-    	<tr>
-        	<td>Select Food</td>
-            <td><select name="food" id="food">
-			<?php foreach ($foods as $food) { ?>
-  				<option value="<?php echo $food['food_id']; ?>"> - <?php echo $food['food_name']; ?> - </option>  	
+<div class="box">
+	<div class="two_columns">
+		<div class="left border_all">
+		<h2>CURRENT STATUS</h2>
+		<table width="60%" align="" class="">
+			<tr>
+				<td><b>Total Sales:</b></td>
+				<td><?php echo $total_sales; ?></td>
+			</tr>
+			<tr>
+				<td><b>Total Sales This Year:</b></td>
+				<td><?php echo $total_sales_by_year; ?></td>
+			</tr>
+			<tr>
+				<td><b>Total Customers:</b></td>
+				<td><?php echo $total_customers; ?></td>
+			</tr>
+			<tr>
+				<td><b>Total Orders Received:</b></td>
+				<td><?php echo $total_orders_received; ?></td>
+			</tr>
+			<tr>
+				<td><b>Total Orders Completed:</b></td>
+				<td><?php echo $total_orders_completed; ?></td>
+			</tr>
+			<tr>
+				<td><b>Total Orders Delivered:</b></td>  
+				<td><?php echo $total_orders_delivered; ?></td>
+			</tr>
+			<tr>
+				<td><b>Total Orders Picked Up:</b></td>  
+				<td><?php echo $total_orders_picked; ?></td>
+			</tr>
+			<tr>
+				<td><b>Total Table(s) Reserved:</b></td>
+				<td><?php echo $total_tables_reserved; ?></td>
+			</tr>
+		</table>
+		</div>
+	
+		<div class="right border_all">
+			<font size="5">GRAPH COMING SOON</font>
+		</div>
+	</div>
 
-			<?php } ?>
-            </select></td>
-            <td><input type="submit" name="Submit" value="Show Ratings" /></td>
-         </tr>
-    </table>
-	</form>
-	<table width="900" align="center">
-		</thead>
-    		<th></th>
-    		<th>Excellent</th>
-    		<th>Good</th>
-    		<th>Average</th>
+    <h2>MENU REVIEWS (100%)</h2>
+	<?php echo form_open(current_url()) ?>
+	<table class="list">
+		<tr align="center">
+            <th class="select_menu"><select name="select_menu" onchange="this.form.submit();">
+	  			<option value=""> - please select - </option>  	
+				<?php foreach ($menus as $menu) { ?>
+				<?php if ($menu_name == $menu['menu_name']) { ?>
+  					<option value="<?php echo $menu['menu_id']; ?>" <?php echo set_select('menu', $menu['menu_id'], TRUE); ?> > - <?php echo $menu['menu_name']; ?> - </option>  	
+				<?php } else { ?>
+  					<option value="<?php echo $menu['menu_id']; ?>" <?php echo set_select('menu', $menu['menu_id']); ?> > - <?php echo $menu['menu_name']; ?> - </option>  	
+				<?php } ?>
+				<?php } ?>
+            </select></th>
     		<th>Bad</th>
     		<th>Worse</th>
-    	</thead>
-    	<tbody>
-			<td><?php echo $rating_food_name; ?></td>
-			<td><?php echo $excellent_value; ?> (<?php echo $excellent_rate; ?>%)</td>
-			<td><?php echo $good_value; ?> (<?php echo $good_rate; ?>%)</td>
-			<td><?php echo $average_value; ?> (<?php echo $average_rate; ?>%)</td>
-			<td><?php echo $bad_value; ?> (<?php echo $bad_rate; ?>%)</td>
-			<td><?php echo $worse_value; ?> (<?php echo $worse_rate; ?>%)</td>
-    	</tbody>
+    		<th>Average</th>
+    		<th>Good</th>
+    		<th>Excellent</th>
+    	</tr>
+		<?php if ($ratings_results) { ?>
+    	<tr align="center">
+			<td><b><?php echo $menu_name; ?></b></td>
+			<td><?php echo $ratings_results['total']['1']; ?> (<?php echo $ratings_results['percent']['1']; ?>%)</td>
+			<td><?php echo $ratings_results['total']['2']; ?> (<?php echo $ratings_results['percent']['2']; ?>%)</td>
+			<td><?php echo $ratings_results['total']['3']; ?> (<?php echo $ratings_results['percent']['3']; ?>%)</td>
+			<td><?php echo $ratings_results['total']['4']; ?> (<?php echo $ratings_results['percent']['4']; ?>%)</td>
+			<td><?php echo $ratings_results['total']['5']; ?> (<?php echo $ratings_results['percent']['5']; ?>%)</td>
+    	</tr>
+		<?php } else { ?>
+    	<tr align="center">
+			<td><b><?php echo $menu_name; ?></b></td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+			<td>0</td>
+    	</tr>
+		<?php } ?>
     </table>
-<hr>  
-<!--Results <?php echo print_r($ratings_results) ?>
-  <br /><br /><br /><br /><br />-->
+	</form>
+	<br />
+	<br />
+	
+	<h2>10 LATEST ORDERS</h2>
+	<table border="0" align="center" class="list">
+	<tr>
+		<th>Order ID</th>
+		<th>Location</th>
+		<th>Customer Name</th>
+		<th>Status</th>
+		<th>Assigned Staff</th>
+		<th>Order Time</th>
+		<th class="right">Date Added</th>
+		<th class="right">Date Modified</th>
+		<th class="right">Action</th>
+	</tr>
+	<?php if ($orders) { ?>
+	<?php foreach ($orders as $order) { ?>
+	<tr>
+		<td class="id"><?php echo $order['order_id']; ?></td>
+		<td><?php echo $order['location_name']; ?></td>
+		<td><?php echo $order['first_name']; ?> <?php echo $order['last_name']; ?></td>
+		<td><?php echo $order['order_status']; ?></td>
+		<td><?php echo $order['staff_name'] ? $order['staff_name'] : 'NONE'; ?></td>
+		<td><?php echo $order['order_time']; ?></td>
+		<td class="right"><?php echo $order['date_added']; ?></td>
+		<td class="right"><?php echo $order['date_modified']; ?></td>
+		<td class="right">(<a class="edit" href="<?php echo $order['edit']; ?>">View</a>)</td>
+	</tr>
+	<?php } ?>
+	<?php } else { ?>
+	<tr>
+		<td colspan="12" align="center"><?php echo $text_empty; ?></td>
+	</tr>
+	<?php } ?>
+	</table>
 </div>

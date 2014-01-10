@@ -1,115 +1,82 @@
-<?php
-class Dashboard extends CI_Controller {
+<?php 
+
+class Dashboard extends MX_Controller {
 
 	public function __construct() {
-		parent::__construct();
-		$this->load->library('admin');
+		parent::__construct(); //  calls the constructor
+		$this->load->library('user');
+		$this->load->library('currency'); // load the currency library
 		$this->load->model('Dashboard_model');
+		$this->load->model('Orders_model');
 		$this->output->enable_profiler(TRUE); // for debugging profiler... remove later
 	}
 
 	public function index() {
 			
-		//check if file exists in views
-		if ( !file_exists('application/views/admin/dashboard.php')) {
-			// Whoops, we don't have a page for that!
-			show_404();
+		if ( !file_exists('application/views/admin/dashboard.php')) { //check if file exists in views folder
+			show_404(); // Whoops, show 404 error page!
 		}
-		//$logged = $this->session->userdata('SESS_ADMIN_ID');
-		$data['title'] = 'Adminstrator Dashboard';
 
-		if (!$this->admin->islogged()) {  
+		if (!$this->user->islogged()) {  
   			redirect('admin/login');
 		}
-
-		//Showing Summaries
-		$results = $this->Dashboard_model->getSummaries();
-		//check if sql query was successful and create variables
-		if ($results) {
-			foreach ($results as $result) {
-				$foods_data	=	$result['foods_query'];
-				$members	=	$result['members_query'];
-				$orders		=	$result['orders_query'];
-				$orders_processed	=	$result['orders_processed_query'];
-				$tables_reserved	=	$result['tables_reserved_query'];
-				$tables_allocated	=	$result['tables_allocated_query'];
-				$partyhalls_reserved	=	$result['partyhalls_reserved_query'];
-				$partyhalls_allocated	=	$result['partyhalls_allocated_query'];
-			}
-			
-			//if ($foods->num_rows())	{
-				//$food_row = $foods->row(); 
-				$data['foods'] = $foods_data->result_array();
-			//}
-	
-			$data['total_foods'] = $foods_data->num_rows();
-			$data['total_members'] = $members->num_rows();
-			$data['total_orders'] = $orders->num_rows();
-			$data['total_orders_processed'] = $orders_processed->num_rows();
-			$data['total_orders_pending'] = $data['total_orders']-$data['total_orders_processed'];
-			$data['total_tables_reserved'] = $tables_reserved->num_rows();
-			$data['total_tables_allocated'] = $tables_allocated->num_rows();
-			$data['total_tables_pending']	= $data['total_tables_reserved']-$data['total_tables_allocated'];
-			$data['total_partyhalls_reserved'] = $partyhalls_reserved->num_rows();
-			$data['total_partyhalls_allocated'] = $partyhalls_allocated->num_rows();
-			$data['total_partyhalls_pending']	= $data['total_partyhalls_reserved']-$data['total_partyhalls_allocated'];
+		
+		if ($this->session->flashdata('alert')) {
+			$data['alert'] = $this->session->flashdata('alert');  // retrieve session flashdata variable if available
+		} else {
+			$data['alert'] = '';
 		}
 
-		//check and store food_id in variable
-		$food_id = $this->input->post('food');
+		$filter = array();
+		$filter['page'] = 1;
+		$filter['limit'] = 10;
+				
+		//Showing Summaries
+		$data['heading'] 				= 'Dashboard';
+		$data['total_sales'] 			= $this->currency->format($this->Dashboard_model->getTotalSales());
+		$data['total_sales_by_year'] 	= $this->currency->format($this->Dashboard_model->getTotalSalesByYear());
+		$data['total_customers'] 		= $this->Dashboard_model->getTotalCustomers();
+		$data['total_orders_received'] 	= $this->Dashboard_model->getTotalOrdersReceived();
+		$data['total_orders_completed'] = $this->Dashboard_model->getTotalOrdersCompleted();
+		$data['total_orders_delivered'] = $this->Dashboard_model->getTotalOrdersDelivered();
+		$data['total_orders_picked'] 	= $this->Dashboard_model->getTotalOrdersPickedUp();
+		$data['total_tables_reserved'] 	= $this->Dashboard_model->getTotalTablesReserved();
+		$data['total_menus'] 			= $this->Dashboard_model->getTotalMenus();
 
-		//retrieve database query based on food_id
-		$ratings_results = $this->Dashboard_model->getRatings($food_id);
-		//check if sql query was successful and create variables
-		if ($ratings_results) {
-			foreach ($ratings_results as $ratings_result) {
-				$ratings_data		=	$ratings_result['ratings'];
-				$excellent_data		=	$ratings_result['excellent_query'];
-				$good_data	=	$ratings_result['good_query'];
-				$average_data	=	$ratings_result['average_query'];
-				$bad_data	=	$ratings_result['bad_query'];
-				$worse_data	=	$ratings_result['worse_query'];
-				//$partyhalls_allocated	=	$result['partyhalls_allocated_query'];
-			}
-        }			
-        	$data['excellent_value'] = $excellent_data->num_rows();
-        	$data['good_value'] = $good_data->num_rows();
-        	$data['average_value'] = $average_data->num_rows();
-        	$data['bad_value'] = $bad_data->num_rows();
-        	$data['worse_value'] = $worse_data->num_rows();
-
-		    if($ratings_data->num_rows() > 0){
-	       		$rating_value = $ratings_data->num_rows();
-				$rating_row = $ratings_data->row(); 
-				$data['rating_food_name'] = $rating_row->food_name;
-        		
-        		$data['excellent_rate'] = $data['excellent_value']/$rating_value*100;
-            	$data['good_rate'] = $data['good_value']/$rating_value*100;
-            	$data['average_rate'] = $data['average_value']/$rating_value*100;
-            	$data['bad_rate'] = $data['bad_value']/$rating_value*100;
-        		$data['worse_rate'] = $data['worse_value']/$rating_value*100;
- 			//}
-         } else {
-				// Else no ratings
-		        $data['rating_food_name'] = '';		        	
-    		    $data['excellent_rate'] = 0;
-        	    $data['good_rate'] = 0;
-        		$data['average_rate'] = 0;
-    	        $data['bad_rate'] = 0;
-	    	    $data['worse_rate'] = 0;
-        }
-
-
-		//$data['ratings_results'] = $this->Dashboard_model->getRatings();
-
-		//if ($ratings_results) {
-			//foreach ($ratings_results as $ratings_result) {
-
-			//}
-		//}
-		//}
-		//$this->session->set_userdata('SESS_ADMIN_ID', '');
-		//$this->session->set_userdata('SESS_ADMIN_NAME', '');
+		$this->load->model('Menus_model'); // load the menus model
+		
+		$data['menus'] = $this->Menus_model->getAdminMenus();
+		
+		$results = $this->Orders_model->getList($filter);
+		
+		//load category data into array
+		$data['orders'] = array();
+		foreach ($results as $result) {					
+			$data['orders'][] = array(
+				'order_id'			=> $result['order_id'],
+				'location_name'		=> $result['location_name'],
+				'first_name'		=> $result['first_name'],
+				'last_name'			=> $result['last_name'],
+				'order_status'		=> $result['status_name'],
+				'staff_name'		=> $result['staff_name'],
+				'order_time'		=> mdate('%H:%i', strtotime($result['order_time'])),
+				'date_added'		=> mdate('%d-%m-%Y', strtotime($result['date_added'])),
+				'date_modified'		=> mdate('%d-%m-%Y', strtotime($result['date_modified'])),
+				'edit' 				=> $this->config->site_url('admin/orders/edit/' . $result['order_id'])
+			);
+		}
+				
+		if ($this->input->post('select_menu')) {
+			$menu_id = $this->input->post('select_menu');
+			$menu_data = $this->Menus_model->getAdminMenu($menu_id);
+			$data['menu_name'] = $menu_data['menu_name'];
+		
+			//retrieve database query based on food_id
+			$data['ratings_results'] = $this->Dashboard_model->getTotalMenuReviews($menu_id);
+		} else {
+			$data['menu_name'] = '';
+			$data['ratings_results'] = array();		
+		}	
 		
 		//load home page content
 		$this->load->view('admin/header', $data);
