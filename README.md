@@ -1,3 +1,5 @@
+Project Moved to https://github.com/sampoyigi/TastyIgniter
+
 TastyIgniter
 ============
 Restaurant Management System for developers or en
